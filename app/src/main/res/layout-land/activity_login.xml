@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="50dp">
+
+        <TextView
+            android:id="@+id/login_logo_text"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:fontFamily="@font/gill_sans_mt"
+            android:gravity="center"
+            android:text="Movier"
+            android:textColor="#FF0000"
+            android:textSize="60sp" />
+
+        <EditText
+            android:id="@+id/login_id_input"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="40dp"
+            android:backgroundTint="#555555"
+            android:fontFamily="@font/helvetica"
+            android:hint="Movier 아이디"
+            android:inputType="textPersonName"
+            android:paddingHorizontal="10dp"
+            android:textColor="#555555"
+            android:textColorHint="#BEBEBE"
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/login_password_input"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="40dp"
+            android:backgroundTint="#555555"
+            android:fontFamily="@font/helvetica"
+            android:hint="Movier 비밀번호"
+            android:inputType="textPassword"
+            android:paddingHorizontal="10dp"
+            android:textColor="#555555"
+            android:textColorHint="#BEBEBE"
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:textSize="20sp" />
+
+        <CheckBox
+            android:id="@+id/login_auto_login_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:fontFamily="@font/yoongodic320"
+            android:text="자동 로그인"
+            android:theme="@style/MyCheckBox" />
+
+        <Button
+            android:id="@+id/login_login_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/dark_grey_rounded_background"
+            android:fontFamily="@font/yoongodic320"
+            android:text="로그인"
+            android:textColor="#FFF"
+            android:textSize="25sp" />
+
+        <LinearLayout
+            android:id="@+id/login_signup_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="40dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/login_signup_logo_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="@font/gill_sans_mt"
+                android:text="Movier"
+                android:textColor="#FF0000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/login_signup_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/yoongodic320"
+                android:text="회원가입"
+                android:textColor="#555555"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</ScrollView>

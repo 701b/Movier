@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SignUpActivity">
+
+
+    <ImageButton
+        android:id="@+id/signup_cancle_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="#FFFFFF"
+        app:srcCompat="@drawable/ic_close" />
+
+    <TextView
+        android:id="@+id/signup_logo_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/gill_sans_mt"
+        android:text="Movier"
+        android:textColor="#FF0000"
+        android:textSize="32sp"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/signup_signup_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/yoongodic320"
+        android:text="회원가입"
+        android:textColor="#222222"
+        android:textSize="22sp"
+        android:layout_marginStart="20dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:background="#FFEEEE">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="50dp">
+
+            <TextView
+                android:id="@+id/signup_id_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:fontFamily="@font/yoongodic320"
+                android:text="아이디가 뭐예요?"
+                android:textColor="#222222"
+                android:textSize="22sp" />
+
+            <EditText
+                android:id="@+id/signup_id_input"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/white_rounded_background"
+                android:fontFamily="@font/yoongodic320"
+                android:hint="아이디"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:textCursorDrawable="@drawable/cursor_color"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/signup_id_alert_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:text=""
+                android:textColor="#FF0000"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/signup_password_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:fontFamily="@font/yoongodic320"
+                android:text="비밀번호는요?"
+                android:textColor="#222222"
+                android:textSize="22sp" />
+
+            <EditText
+                android:id="@+id/signup_password_input"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/white_rounded_background"
+                android:fontFamily="@font/yoongodic320"
+                android:hint="비밀번호"
+                android:inputType="textPassword"
+                android:paddingStart="15dp"
+                android:textCursorDrawable="@drawable/cursor_color"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/signup_password_alert_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:text=""
+                android:textColor="#FF0000"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/signup_gender_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:fontFamily="@font/yoongodic320"
+                android:text="성별이 궁금해요"
+                android:textColor="#222222"
+                android:textSize="22sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/signup_man_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rounded_red_bordered_background"
+                    android:text="남자"
+                    android:textColor="#FF0000"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/signup_woman_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_rounded_grey_bordered_background"
+                    android:text="여자"
+                    android:textColor="#BBBBBB"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/signup_signup_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/white_rounded_grey_bordered_background"
+                android:text="가입"
+                android:textColor="#BBBBBB"
+                android:textSize="20sp" />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

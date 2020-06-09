@@ -1,0 +1,2 @@
+rootProject.name='Movier'
+include ':app'

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "678785237515",
+    "firebase_url": "https://movier-308a7.firebaseio.com",
+    "project_id": "movier-308a7",
+    "storage_bucket": "movier-308a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678785237515:android:dbf53ed511cc646500fd0e",
+        "android_client_info": {
+          "package_name": "edu.skku.map.movier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678785237515-f2jsk0g7lmn0p870m92tt16u9ahq4ubk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArZjtoZY1Um81kCGnzwcflvkniZZcZSk8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678785237515-f2jsk0g7lmn0p870m92tt16u9ahq4ubk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
