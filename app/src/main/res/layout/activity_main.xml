@@ -18,15 +18,26 @@
             android:layout_height="?attr/actionBarSize"
             android:orientation="horizontal"
             android:background="#FFFFFF"
-            android:gravity="end|center_vertical">
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/main_logo_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/gill_sans_mt"
+                android:text="Movier"
+                android:textColor="#FF0000"
+                android:textSize="26sp"
+                android:layout_marginStart="15dp"/>
 
             <ImageButton
                 android:id="@+id/main_toggle_drawer_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_person"
+                android:layout_marginEnd="10dp"
                 android:background="#FFFFFF"
-                android:layout_marginEnd="10dp"/>
+                app:srcCompat="@drawable/ic_person" />
 
         </LinearLayout>
 

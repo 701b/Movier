@@ -8,9 +8,13 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,10 +27,12 @@ import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private ProgressDialog progressDialog;
-
     private EditText idInput;
     private EditText passwordInput;
+
+    private SharedPreferences preferences;
+
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -40,7 +46,11 @@ public class LoginActivity extends AppCompatActivity {
         idInput = findViewById(R.id.login_id_input);
         passwordInput = findViewById(R.id.login_password_input);
 
+        preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+
         progressDialog = new ProgressDialog(LoginActivity.this);
+
+
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +92,8 @@ public class LoginActivity extends AppCompatActivity {
                                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 
                                             intent.putExtra("account", post);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                                             startActivity(intent);
                                             overridePendingTransition(R.anim.do_nothing, R.anim.slide_to_bottom);

@@ -51,15 +51,6 @@
             android:textCursorDrawable="@drawable/cursor_color"
             android:textSize="20sp" />
 
-        <CheckBox
-            android:id="@+id/login_auto_login_checkbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="40dp"
-            android:fontFamily="@font/yoongodic320"
-            android:text="자동 로그인"
-            android:theme="@style/MyCheckBox" />
-
         <Button
             android:id="@+id/login_login_button"
             android:layout_width="match_parent"
