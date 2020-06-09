@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -19,7 +20,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -42,14 +42,15 @@ public class MainActivity extends AppCompatActivity {
     private View headerView;
     private ImageView drawerProfileImage;
 
-    StorageReference storageReference;
+    private ProgressDialog progressDialog;
+
+    private StorageReference storageReference;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        autoLogin();
 /*
         new NaverMovieSearch("어벤져스", new OnReceiveMovieDataListener() {
             @Override
@@ -64,14 +65,15 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.main_navigation_view);
 
         headerView = navigationView.getHeaderView(0);
-        initDrawerHeader();
-
         drawerIdText = headerView.findViewById(R.id.drawer_id_text);
-
         drawerLayout = findViewById(R.id.main_drawer_layout);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         storageReference = FirebaseStorage.getInstance().getReference();
+        progressDialog = new ProgressDialog(MainActivity.this);
+
+        autoLogin();
+        initDrawerHeader();
 
         toggleDrawerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
             final String id = preferences.getString("id", null);
             final String password = preferences.getString("password", null);
+
+            // 데이터베이스와 서버 Storage 연결하는데 지연되는 시간동안 dialog를 표시
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("잠시만 기다려주세요");
+            progressDialog.show();
 
             databaseReference.child(UserAccountPost.ACCOUNT_TABLE_NAME).child(id)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -130,8 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == PICK_PROFILE_IMAGE) {
             if (resultCode == RESULT_OK) {
-                UploadTask task = storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(userAccountPost.getId()).putFile(data.getData());
-
+                storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(userAccountPost.getId()).putFile(data.getData());
                 drawerProfileImage.setImageURI(data.getData());
             }
         }
@@ -177,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                 drawerProfileImage.setImageBitmap(bitmap);
+                progressDialog.dismiss();
             }
         });
     }
