@@ -15,7 +15,8 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         app:srcCompat="@drawable/ic_person_grey"
-        android:background="@drawable/profile_image_circle_background"/>
+        android:background="@drawable/profile_image_circle_background"
+        android:scaleType="centerCrop"/>
 
     <TextView
         android:id="@+id/drawer_id_text"

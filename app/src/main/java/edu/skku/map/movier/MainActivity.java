@@ -8,6 +8,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private View headerView;
     private ImageView drawerProfileImage;
 
+    StorageReference storageReference;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.main_drawer_layout);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         toggleDrawerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                                     // 비밀번호가 데이터베이스의 비밀번호와 같을 때
                                     userAccountPost = post;
                                     drawerIdText.setText(userAccountPost.getId());
+                                    loadProfileImage();
                                 } else {
                                     // 비밀번호가 데이터베이스의 비밀번호와 다를 때
                                     goToSignUpPage();
@@ -123,12 +130,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == PICK_PROFILE_IMAGE) {
             if (resultCode == RESULT_OK) {
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
                 UploadTask task = storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(userAccountPost.getId()).putFile(data.getData());
 
                 drawerProfileImage.setImageURI(data.getData());
-                drawerProfileImage.getLayoutParams().width = 270;
-                drawerProfileImage.getLayoutParams().height = 270;
             }
         }
     }
@@ -137,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         Button drawerLogoutButton = headerView.findViewById(R.id.drawer_logout_button);
 
         drawerProfileImage = headerView.findViewById(R.id.drawer_profile_image);
+        drawerProfileImage.setClipToOutline(true);
         drawerProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +166,17 @@ public class MainActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 startActivity(intent);
+            }
+        });
+    }
+
+    private void loadProfileImage() {
+        storageReference.child(userAccountPost.PROFILE_IMAGE_ADDRESS).child(userAccountPost.getId()).getBytes(4 * 1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                drawerProfileImage.setImageBitmap(bitmap);
             }
         });
     }
