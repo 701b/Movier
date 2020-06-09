@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -32,7 +30,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        autoLogin();
+/*
+        new NaverMovieSearch("어벤져스", new OnReceiveMovieDataListener() {
+            @Override
+            public void onReceiveMovieData(List<MovieData> movieDataList) {
+                for (MovieData data : movieDataList) {
+                    Log.d("TEST", data.getTitle());
+                }
+            }
+        });
+*/
+        ImageButton toggleDrawerButton = findViewById(R.id.main_toggle_drawer_button);
 
+        drawerLayout = findViewById(R.id.main_drawer_layout);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+        toggleDrawerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.END);
+            }
+        });
+    }
+
+    private void autoLogin() {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
         // preference에 아이디와 비밀번호가 저장된 경우 자동 로그인
@@ -71,27 +93,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             goToSignUpPage();
         }
-/*
-        new NaverMovieSearch("어벤져스", new OnReceiveMovieDataListener() {
-            @Override
-            public void onReceiveMovieData(List<MovieData> movieDataList) {
-                for (MovieData data : movieDataList) {
-                    Log.d("TEST", data.getTitle());
-                }
-            }
-        });
-*/
-        ImageButton toggleDrawerButton = findViewById(R.id.main_toggle_drawer_button);
-
-        drawerLayout = findViewById(R.id.main_drawer_layout);
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
-        toggleDrawerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(GravityCompat.END);
-            }
-        });
     }
 
     private void goToSignUpPage() {
