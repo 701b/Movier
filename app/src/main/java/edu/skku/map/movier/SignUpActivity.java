@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -41,6 +42,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         ImageButton cancleButton = findViewById(R.id.signup_cancle_button);
+        TextView loginText = findViewById(R.id.signup_login_text);
 
         idInput = findViewById(R.id.signup_id_input);
         passwordInput = findViewById(R.id.signup_password_input);
@@ -51,6 +53,18 @@ public class SignUpActivity extends AppCompatActivity {
         passwordAlertText = findViewById(R.id.signup_password_alert_text);
 
         progressDialog = new ProgressDialog(SignUpActivity.this);
+
+        loginText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                startActivity(intent);
+            }
+        });
 
         idInput.addTextChangedListener(new TextWatcher() {
             @Override

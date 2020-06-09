@@ -50,8 +50,6 @@ public class LoginActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(LoginActivity.this);
 
-
-
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,10 +88,15 @@ public class LoginActivity extends AppCompatActivity {
                                         if (post.password.equals(passwordInput.getText().toString())) {
                                             // 비밀번호가 데이터베이스의 비밀번호와 같을 때
                                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                            SharedPreferences.Editor editor = preferences.edit();
 
                                             intent.putExtra("account", post);
                                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                                            editor.putString("id", idInput.getText().toString());
+                                            editor.putString("password", passwordInput.getText().toString());
+                                            editor.apply();
 
                                             startActivity(intent);
                                             overridePendingTransition(R.anim.do_nothing, R.anim.slide_to_bottom);
@@ -132,6 +135,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
