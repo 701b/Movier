@@ -29,7 +29,7 @@
             android:backgroundTint="#555555"
             android:fontFamily="@font/helvetica"
             android:hint="Movier 아이디"
-            android:inputType="textPersonName"
+            android:inputType="text"
             android:paddingHorizontal="10dp"
             android:textColor="#555555"
             android:textColorHint="#BEBEBE"

@@ -136,7 +136,7 @@
                 android:background="@drawable/white_rounded_background"
                 android:fontFamily="@font/yoongodic320"
                 android:hint="아이디"
-                android:inputType="textPersonName"
+                android:inputType="text"
                 android:paddingStart="15dp"
                 android:textCursorDrawable="@drawable/red_cursor"
                 android:textSize="18sp" />

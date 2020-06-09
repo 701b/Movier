@@ -5,17 +5,27 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,6 +41,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int PICK_PROFILE_IMAGE = 777;
@@ -41,10 +54,17 @@ public class MainActivity extends AppCompatActivity {
     private TextView drawerIdText;
     private View headerView;
     private ImageView drawerProfileImage;
+    private EditText movieTitleInput;
+    RecyclerView recyclerView;
 
     private ProgressDialog progressDialog;
 
     private StorageReference storageReference;
+
+    private List<MovieData> movieDataList;
+    private MovieItemAdapter movieItemAdapter;
+
+    private boolean isSearchFinished;
 
 
     @Override
@@ -68,17 +88,87 @@ public class MainActivity extends AppCompatActivity {
         drawerIdText = headerView.findViewById(R.id.drawer_id_text);
         drawerLayout = findViewById(R.id.main_drawer_layout);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        recyclerView = findViewById(R.id.main_recycler_view);
 
         storageReference = FirebaseStorage.getInstance().getReference();
         progressDialog = new ProgressDialog(MainActivity.this);
 
+        movieTitleInput = findViewById(R.id.main_movie_title_input);
+
         autoLogin();
         initDrawerHeader();
+        initRecyclerView();
 
         toggleDrawerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 drawerLayout.openDrawer(GravityCompat.END);
+            }
+        });
+    }
+
+    private void initRecyclerView() {
+        movieDataList = new ArrayList<>();
+        movieItemAdapter = new MovieItemAdapter(this, movieDataList);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setAdapter(movieItemAdapter);
+
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (!isSearchFinished) {
+                    if (!recyclerView.canScrollVertically(1)) {
+                        new NaverMovieSearch(movieTitleInput.getText().toString(), movieDataList.size() + 1, new OnReceiveMovieDataListener() {
+                            @Override
+                            public void onReceiveMovieData(List<MovieData> movieDataList) {
+                                if (movieDataList.size() < 10) {
+                                    isSearchFinished = true;
+                                } else {
+                                    isSearchFinished = false;
+                                }
+
+                                MainActivity.this.movieDataList.addAll(movieDataList);
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        movieItemAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        movieTitleInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    new NaverMovieSearch(movieTitleInput.getText().toString(), 1, new OnReceiveMovieDataListener() {
+                        @Override
+                        public void onReceiveMovieData(List<MovieData> movieDataList) {
+                            if (movieDataList.size() < 10) {
+                                isSearchFinished = true;
+                            } else {
+                                isSearchFinished = false;
+                            }
+
+                            MainActivity.this.movieDataList.clear();
+                            MainActivity.this.movieDataList.addAll(movieDataList);
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    movieItemAdapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+                    });
+                }
+
+                return true;
             }
         });
     }

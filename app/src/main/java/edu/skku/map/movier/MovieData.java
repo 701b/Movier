@@ -3,7 +3,7 @@ package edu.skku.map.movier;
 public class MovieData {
 
     private String title;
-    private String imageUrl;
+    private String image;
     private String pubDate;
     private String director;
     private String actor;
@@ -14,8 +14,8 @@ public class MovieData {
         return filteredTitle;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImage() {
+        return image;
     }
 
     public String getPubDate() {

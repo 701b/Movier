@@ -32,10 +32,12 @@ public class NaverMovieSearch {
     private OkHttpClient client;
     private String searchKeyword;
     private OnReceiveMovieDataListener onReceiveMovieDataListener;
+    private int startPosition;
 
 
-    public NaverMovieSearch(String searchKeyword, OnReceiveMovieDataListener onReceiveMovieDataListener) {
+    public NaverMovieSearch(String searchKeyword, int startPosition, OnReceiveMovieDataListener onReceiveMovieDataListener) {
         this.searchKeyword = searchKeyword;
+        this.startPosition = startPosition;
         this.onReceiveMovieDataListener = onReceiveMovieDataListener;
 
         sendRequest();
@@ -55,6 +57,7 @@ public class NaverMovieSearch {
         requestHeaders.put("X-Naver-Client-Secret", clientSecret);
 
         urlBuilder.addQueryParameter("query", searchKeyword);
+        urlBuilder.addQueryParameter("start", String.valueOf(startPosition));
         reqUrl = urlBuilder.build().toString();
         headerBuild = Headers.of(requestHeaders);
         request = new Request.Builder().url(reqUrl).headers(headerBuild).build();
