@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +38,7 @@ public class SignUpActivity extends AppCompatActivity {
     private Button signUpButton;
     private TextView idAlertText;
     private TextView passwordAlertText;
-    private TextView loginText;
+    private LinearLayout loginLayout;
     private TextView introductionText1;
     private TextView introductionText2;
 
@@ -58,7 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.signup_signup_button);
         idAlertText = findViewById(R.id.signup_id_alert_text);
         passwordAlertText = findViewById(R.id.signup_password_alert_text);
-        loginText = findViewById(R.id.signup_login_text);
+        loginLayout = findViewById(R.id.signup_login_layout);
         introductionText1 = findViewById(R.id.signup_introduction_text1);
         introductionText2 = findViewById(R.id.signup_introduction_text2);
 
@@ -70,7 +71,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         introductionText1.setVisibility(View.INVISIBLE);
         introductionText2.setVisibility(View.INVISIBLE);
-        loginText.setVisibility(View.INVISIBLE);
+        loginLayout.setVisibility(View.INVISIBLE);
 
         AsyncTask.execute(new Runnable() {
             @Override
@@ -84,16 +85,16 @@ public class SignUpActivity extends AppCompatActivity {
                     public void run() {
                         introductionText1.setVisibility(View.VISIBLE);
                         introductionText2.setVisibility(View.VISIBLE);
-                        loginText.setVisibility(View.VISIBLE);
+                        loginLayout.setVisibility(View.VISIBLE);
                         introductionText1.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
                         introductionText2.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
-                        loginText.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
+                        loginLayout.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
                     }
                 });
             }
         });
 
-        loginText.setOnClickListener(new View.OnClickListener() {
+        loginLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToLoginPage();

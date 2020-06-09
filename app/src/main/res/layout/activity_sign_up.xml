@@ -77,20 +77,46 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/yoongodic320"
-                android:text="아래 질문들에 대답해주세요"
+                android:text="계정을 만들어주세요"
                 android:textColor="#222222"
                 android:textSize="22sp" />
 
-            <TextView
-                android:id="@+id/signup_login_text"
+            <LinearLayout
+                android:id="@+id/signup_login_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:fontFamily="@font/yoongodic320"
-                android:text="이미 회원이시면 로그인하세요 >>"
-                android:textColor="#222222"
-                android:textSize="16sp" />
+                android:layout_height="match_parent"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/signup_login_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/yoongodic320"
+                    android:text="이미 회원이시라면 "
+                    android:textColor="#222222"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/signup_login_text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/yoongodic320"
+                    android:text="로그인"
+                    android:textColor="#FF0000"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/signup_login_text3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/yoongodic320"
+                    android:text="하세요 >>"
+                    android:textColor="#222222"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/signup_id_text"
@@ -98,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="150dp"
                 android:fontFamily="@font/yoongodic320"
-                android:text="아이디가 뭐예요?"
+                android:text="아이디를 입력해주세요"
                 android:textColor="#222222"
                 android:textSize="22sp" />
 
@@ -131,7 +157,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"
                 android:fontFamily="@font/yoongodic320"
-                android:text="비밀번호는요?"
+                android:text="비밀번호를 입력해주세요"
                 android:textColor="#222222"
                 android:textSize="22sp" />
 
@@ -164,7 +190,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"
                 android:fontFamily="@font/yoongodic320"
-                android:text="성별이 궁금해요"
+                android:text="성별을 선택해주세요"
                 android:textColor="#222222"
                 android:textSize="22sp" />
 

@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                                         } else {
                                             // 비밀번호가 데이터베이스의 비밀번호와 다를 때
                                             new AlertDialog.Builder(LoginActivity.this)
-                                                    .setMessage("비밀번호가 다르네요")
+                                                    .setMessage("비밀번호가 달라요")
                                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {}
@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                                     } else {
                                         // 데이터베이스에 같은 id가 존재하지 않을 때
                                         new AlertDialog.Builder(LoginActivity.this)
-                                                .setMessage("그런 아이디가 없네요")
+                                                .setMessage("그런 아이디가 없어요")
                                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {}
