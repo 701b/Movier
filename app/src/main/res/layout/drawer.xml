@@ -1,7 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#222222"
+    android:paddingHorizontal="10dp">
+
+    <ImageView
+        android:id="@+id/drawer_profile_image"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        app:srcCompat="@drawable/ic_person_grey"
+        android:background="@drawable/profile_image_circle_background"/>
+
+    <TextView
+        android:id="@+id/drawer_id_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ID"
+        android:textSize="25sp"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/helvetica"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:id="@+id/drawer_no_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/drawer_border_button_top"
+        android:text="의미없는 버튼"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/yoongodic320"
+        android:textSize="20sp"
+        android:layout_marginTop="30dp"/>
+
+    <Button
+        android:id="@+id/drawer_logout_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/drawer_border_button"
+        android:text="로그아웃"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/yoongodic320"
+        android:textSize="20sp"/>
+
+
+
 
 </LinearLayout>

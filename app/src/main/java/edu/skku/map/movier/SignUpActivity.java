@@ -7,10 +7,12 @@ import androidx.core.content.ContextCompat;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,6 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    private DatabaseReference databaseReference;
+
     private ProgressDialog progressDialog;
 
     private EditText idInput;
@@ -33,6 +37,9 @@ public class SignUpActivity extends AppCompatActivity {
     private Button signUpButton;
     private TextView idAlertText;
     private TextView passwordAlertText;
+    private TextView loginText;
+    private TextView introductionText1;
+    private TextView introductionText2;
 
     private boolean isMan = true;
 
@@ -42,7 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         ImageButton cancleButton = findViewById(R.id.signup_cancle_button);
-        TextView loginText = findViewById(R.id.signup_login_text);
+        TextView greetingText = findViewById(R.id.signup_greeting_text);
 
         idInput = findViewById(R.id.signup_id_input);
         passwordInput = findViewById(R.id.signup_password_input);
@@ -51,18 +58,45 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.signup_signup_button);
         idAlertText = findViewById(R.id.signup_id_alert_text);
         passwordAlertText = findViewById(R.id.signup_password_alert_text);
+        loginText = findViewById(R.id.signup_login_text);
+        introductionText1 = findViewById(R.id.signup_introduction_text1);
+        introductionText2 = findViewById(R.id.signup_introduction_text2);
 
         progressDialog = new ProgressDialog(SignUpActivity.this);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        greetingText.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_from_left));
+
+        introductionText1.setVisibility(View.INVISIBLE);
+        introductionText2.setVisibility(View.INVISIBLE);
+        loginText.setVisibility(View.INVISIBLE);
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {}
+
+                SignUpActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        introductionText1.setVisibility(View.VISIBLE);
+                        introductionText2.setVisibility(View.VISIBLE);
+                        loginText.setVisibility(View.VISIBLE);
+                        introductionText1.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
+                        introductionText2.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
+                        loginText.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
+                    }
+                });
+            }
+        });
 
         loginText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                startActivity(intent);
+                goToLoginPage();
             }
         });
 
@@ -72,12 +106,33 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!idInput.getText().toString().equals("") && !passwordInput.getText().toString().equals("")) {
-                    signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_red_bordered_background));
-                    signUpButton.setTextColor(Color.parseColor("#FF0000"));
-                } else {
-                    signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
-                    signUpButton.setTextColor(Color.parseColor("#BBBBBB"));
+                if (!s.toString().equals("")) {
+                    databaseReference.child(UserAccountPost.ACCOUNT_TABLE_NAME).child(idInput.getText().toString())
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    UserAccountPost post = dataSnapshot.getValue(UserAccountPost.class);
+
+                                    if (post != null) {
+                                        // 데이터베이스에 같은 id가 존재할 때
+                                        idAlertText.setText("다른 아이디를 사용해주세요");
+                                        signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
+                                        signUpButton.setTextColor(Color.parseColor("#BBBBBB"));
+                                    } else {
+                                        if (!idInput.getText().toString().equals("") && !passwordInput.getText().toString().equals("")) {
+                                            signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_red_bordered_background));
+                                            signUpButton.setTextColor(Color.parseColor("#FF0000"));
+                                        } else {
+                                            signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
+                                            signUpButton.setTextColor(Color.parseColor("#BBBBBB"));
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
                 }
 
                 idAlertText.setText("");
@@ -167,8 +222,8 @@ public class SignUpActivity extends AppCompatActivity {
                                                 isMan);
 
                                         newAccountPost.postFirebaseDatabase(databaseReference);
-                                        finish();
-                                        overridePendingTransition(android.R.anim.fade_in, R.anim.slide_to_bottom);
+
+                                        goToLoginPage();
                                     } else {
                                         // 데이터베이스에 같은 id가 존재할 때
                                         idAlertText.setText("다른 아이디를 사용해주세요");
@@ -187,10 +242,19 @@ public class SignUpActivity extends AppCompatActivity {
         cancleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, R.anim.slide_to_bottom);
+                goToLoginPage();
             }
         });
+    }
+
+    private void goToLoginPage() {
+        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, R.anim.slide_to_bottom);
     }
 
 }

@@ -11,10 +11,12 @@ import java.util.Map;
 public class UserAccountPost implements Serializable {
 
     public static final String ACCOUNT_TABLE_NAME = "account_table";
+    public static final String PROFILE_IMAGE_ADDRESS = "profile_image";
 
-    public String id;
-    public String password;
-    public boolean isMan;
+    private String id;
+    private String password;
+    private boolean isMan;
+    private String profileImageAddress;
 
 
     public UserAccountPost() {}
@@ -31,7 +33,8 @@ public class UserAccountPost implements Serializable {
 
         result.put("id", id);
         result.put("password", password);
-        result.put("isMan", isMan);
+        result.put("is_man", isMan);
+        result.put("profile_image_address", profileImageAddress);
 
         return result;
     }
@@ -44,5 +47,21 @@ public class UserAccountPost implements Serializable {
 
         childUpdates.put("/" + ACCOUNT_TABLE_NAME + "/" + id, postValues);
         databaseReference.updateChildren(childUpdates);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getProfileImageAddress() {
+        return profileImageAddress;
+    }
+
+    public void setProfileImageAddress(String profileImageAddress) {
+        this.profileImageAddress = profileImageAddress;
     }
 }

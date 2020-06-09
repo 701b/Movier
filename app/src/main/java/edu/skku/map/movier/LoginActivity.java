@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     if (post != null) {
                                         // 데이터베이스에 같은 id가 존재할 때
-                                        if (post.password.equals(passwordInput.getText().toString())) {
+                                        if (post.getPassword().equals(passwordInput.getText().toString())) {
                                             // 비밀번호가 데이터베이스의 비밀번호와 같을 때
                                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                             SharedPreferences.Editor editor = preferences.edit();
@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 startActivity(intent);
-                overridePendingTransition(R.anim.slide_from_bottom, android.R.anim.fade_out);
+                overridePendingTransition(R.anim.slide_from_bottom, R.anim.do_nothing);
             }
         });
     }
