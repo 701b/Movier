@@ -74,12 +74,12 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
                     Log.e("TEST", "Error getting bitmap", e);
                 }
 
-                final Bitmap temp = bitmap;
+                movieData.setPosterBitmap(bitmap);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        holder.posterImage.setImageBitmap(temp);
+                        holder.posterImage.setImageBitmap(movieData.getPosterBitmap());
                         holder.titleText.setText(movieData.getTitle());
                         holder.pubDateText.setText(movieData.getPubDate());
                     }

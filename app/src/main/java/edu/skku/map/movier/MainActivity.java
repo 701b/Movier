@@ -11,21 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,23 +35,20 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int PICK_PROFILE_IMAGE = 777;
-
     private UserAccountPost userAccountPost;
-
-    private DrawerLayout drawerLayout;
-    private TextView drawerIdText;
-    private View headerView;
-    private ImageView drawerProfileImage;
-    private EditText movieTitleInput;
-    RecyclerView recyclerView;
-
-    private ProgressDialog progressDialog;
-
     private StorageReference storageReference;
+
+    private NavigationView navigationView;
+    private EditText movieTitleInput;
+    private RecyclerView recyclerView;
+    private ImageButton toggleDrawerButton;
 
     private List<MovieData> movieDataList;
     private MovieItemAdapter movieItemAdapter;
+
+    private ProgressDialog progressDialog;
+
+    private CustomNavigationViewSetting customNavigationViewSetting;
 
     private boolean isSearchFinished;
 
@@ -65,40 +57,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-/*
-        new NaverMovieSearch("어벤져스", new OnReceiveMovieDataListener() {
-            @Override
-            public void onReceiveMovieData(List<MovieData> movieDataList) {
-                for (MovieData data : movieDataList) {
-                    Log.d("TEST", data.getTitle());
-                }
-            }
-        });
-*/
-        ImageButton toggleDrawerButton = findViewById(R.id.main_toggle_drawer_button);
-        NavigationView navigationView = findViewById(R.id.main_navigation_view);
 
-        headerView = navigationView.getHeaderView(0);
-        drawerIdText = headerView.findViewById(R.id.drawer_id_text);
-        drawerLayout = findViewById(R.id.main_drawer_layout);
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        toggleDrawerButton = findViewById(R.id.main_toggle_drawer_button);
+        navigationView = findViewById(R.id.main_navigation_view);
         recyclerView = findViewById(R.id.main_recycler_view);
-
-        storageReference = FirebaseStorage.getInstance().getReference();
-        progressDialog = new ProgressDialog(MainActivity.this);
-
         movieTitleInput = findViewById(R.id.main_movie_title_input);
 
-        autoLogin();
-        initDrawerHeader();
-        initRecyclerView();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
-        toggleDrawerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(GravityCompat.END);
-            }
-        });
+        progressDialog = new ProgressDialog(MainActivity.this);
+
+        autoLogin();
+        initRecyclerView();
     }
 
     private void initRecyclerView() {
@@ -177,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             final String id = preferences.getString("id", null);
             final String password = preferences.getString("password", null);
 
-            // 데이터베이스와 서버 Storage 연결하는데 지연되는 시간동안 dialog를 표시
+            // 데이터베이스와 연결하는데 지연되는 시간동안 dialog를 표시
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setMessage("잠시만 기다려주세요");
             progressDialog.show();
@@ -193,8 +163,10 @@ public class MainActivity extends AppCompatActivity {
                                 if (post.getPassword().equals(password)) {
                                     // 비밀번호가 데이터베이스의 비밀번호와 같을 때
                                     userAccountPost = post;
-                                    drawerIdText.setText(userAccountPost.getId());
-                                    loadProfileImage();
+
+                                    customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, userAccountPost, toggleDrawerButton);
+
+                                    progressDialog.dismiss();
                                 } else {
                                     // 비밀번호가 데이터베이스의 비밀번호와 다를 때
                                     goToSignUpPage();
@@ -219,58 +191,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_PROFILE_IMAGE) {
+        if (requestCode == CustomNavigationViewSetting.PICK_PROFILE_IMAGE) {
             if (resultCode == RESULT_OK) {
                 storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(userAccountPost.getId()).putFile(data.getData());
-                drawerProfileImage.setImageURI(data.getData());
+                customNavigationViewSetting.setProfileImage(data.getData());
             }
         }
-    }
-
-    private void initDrawerHeader() {
-        Button drawerLogoutButton = headerView.findViewById(R.id.drawer_logout_button);
-
-        drawerProfileImage = headerView.findViewById(R.id.drawer_profile_image);
-        drawerProfileImage.setClipToOutline(true);
-        drawerProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-
-                startActivityForResult(gallery, PICK_PROFILE_IMAGE);
-            }
-        });
-
-        drawerLogoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                SharedPreferences.Editor editor = preferences.edit();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-
-                editor.remove("id");
-                editor.remove("password");
-                editor.apply();
-
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                startActivity(intent);
-            }
-        });
-    }
-
-    private void loadProfileImage() {
-        storageReference.child(userAccountPost.PROFILE_IMAGE_ADDRESS).child(userAccountPost.getId())
-                .getBytes(4 * 1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-
-                        drawerProfileImage.setImageBitmap(bitmap);
-                        progressDialog.dismiss();
-                    }
-        });
     }
 
     private void goToSignUpPage() {

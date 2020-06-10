@@ -83,7 +83,7 @@
                         android:id="@+id/movie_detail_subtitle_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2020 국가"
+                        android:text="2020"
                         android:textColor="#888888"
                         android:textSize="16sp"
                         android:fontFamily="@font/yoongodic320"/>
@@ -165,37 +165,6 @@
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
-                        android:text="장르"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="|"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"/>
-
-                    <TextView
-                        android:id="@+id/movie_detail_genre_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="공포"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"
-                        android:paddingStart="5dp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="5dp">
-
-                    <TextView
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
                         android:text="제작년도"
                         android:textColor="#444444"
                         android:fontFamily="@font/yoongodic320"/>
@@ -244,6 +213,8 @@
                         android:text="민수 철수"
                         android:textColor="#444444"
                         android:fontFamily="@font/yoongodic320"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:paddingStart="5dp"/>
 
                 </LinearLayout>

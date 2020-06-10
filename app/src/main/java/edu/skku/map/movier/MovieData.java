@@ -1,5 +1,7 @@
 package edu.skku.map.movier;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 public class MovieData implements Serializable {
@@ -9,6 +11,8 @@ public class MovieData implements Serializable {
     private String pubDate;
     private String director;
     private String actor;
+
+    private Bitmap posterBitmap;
 
     public String getTitle() {
         String filteredTitle = title.replaceAll("<b>|</b>", "");
@@ -37,5 +41,13 @@ public class MovieData implements Serializable {
         }
 
         return result;
+    }
+
+    public Bitmap getPosterBitmap() {
+        return posterBitmap;
+    }
+
+    public void setPosterBitmap(Bitmap posterBitmap) {
+        this.posterBitmap = posterBitmap;
     }
 }
