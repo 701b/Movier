@@ -19,7 +19,6 @@
         app:srcCompat="@drawable/ic_close" />
 
     <TextView
-        android:id="@+id/signup_logo_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/gill_sans_mt"
@@ -29,7 +28,6 @@
         android:layout_marginStart="20dp"/>
 
     <TextView
-        android:id="@+id/signup_signup_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/yoongodic320"
@@ -90,7 +88,6 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/signup_login_text1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/yoongodic320"
@@ -99,7 +96,6 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/signup_login_text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/yoongodic320"
@@ -108,7 +104,6 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/signup_login_text3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/yoongodic320"
@@ -119,7 +114,6 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/signup_id_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="150dp"
@@ -152,7 +146,6 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/signup_password_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"
@@ -185,7 +178,6 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/signup_gender_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"

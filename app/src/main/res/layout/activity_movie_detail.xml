@@ -16,7 +16,7 @@
         android:gravity="center_vertical">
 
         <ImageButton
-            android:id="@+id/main_logo_text"
+            android:id="@+id/movie_detail_back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_back"
@@ -30,7 +30,7 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/main_toggle_drawer_button"
+            android:id="@+id/movie_detail_toggle_drawer_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
@@ -57,7 +57,7 @@
                 android:paddingHorizontal="20dp">
 
                 <ImageView
-                    android:id="@+id/imageView"
+                    android:id="@+id/movie_detail_poster_image"
                     android:layout_width="81dp"
                     android:layout_height="120dp"
                     android:scaleType="centerCrop"/>
@@ -71,6 +71,7 @@
 
                     <TextView
                         android:id="@+id/textView"
+                        android:id="@+id/movie_detail_title_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="타이틀"
@@ -80,7 +81,7 @@
                         android:textFontWeight="700"/>
 
                     <TextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/movie_detail_subtitle_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2020 국가"
@@ -92,7 +93,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/movie_detail_score_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="평균 5.0"
@@ -104,7 +105,6 @@
                 android:layout_marginTop="5dp"/>
 
             <TextView
-                android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="기본정보"
@@ -142,7 +142,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="| 홍길동"
+                        android:text="|"
+                        android:textColor="#444444"
+                        android:fontFamily="@font/yoongodic320"/>
+
+                    <TextView
+                        android:id="@+id/movie_detail_director_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="홍길동"
                         android:textColor="#444444"
                         android:fontFamily="@font/yoongodic320"
                         android:paddingStart="5dp"/>
@@ -165,7 +173,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="| 공포"
+                        android:text="|"
+                        android:textColor="#444444"
+                        android:fontFamily="@font/yoongodic320"/>
+
+                    <TextView
+                        android:id="@+id/movie_detail_genre_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="공포"
                         android:textColor="#444444"
                         android:fontFamily="@font/yoongodic320"
                         android:paddingStart="5dp"/>
@@ -188,7 +204,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="| 2020"
+                        android:text="|"
+                        android:textColor="#444444"
+                        android:fontFamily="@font/yoongodic320"/>
+
+                    <TextView
+                        android:id="@+id/movie_detail_pub_date_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2020"
                         android:textColor="#444444"
                         android:fontFamily="@font/yoongodic320"
                         android:paddingStart="5dp"/>
@@ -210,7 +234,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="| 민수 철수"
+                        android:text="|"
+                        android:textColor="#444444"
+                        android:fontFamily="@font/yoongodic320"/>
+
+                    <TextView
+                        android:id="@+id/movie_detail_actor_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="민수 철수"
                         android:textColor="#444444"
                         android:fontFamily="@font/yoongodic320"
                         android:paddingStart="5dp"/>
@@ -229,7 +261,6 @@
                 android:layout_marginTop="5dp">
 
                 <TextView
-                    android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="리뷰"
@@ -239,7 +270,7 @@
                     android:fontFamily="@font/yoongodic320"/>
 
                 <TextView
-                    android:id="@+id/textView7"
+                    android:id="@+id/movie_detail_review_number_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="256"
@@ -249,6 +280,7 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/movie_detail_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#FFFFFF"
@@ -257,6 +289,7 @@
                 android:layout_marginTop="1dp" />
 
             <LinearLayout
+                android:id="@+id/movie_detail_write_review_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -273,19 +306,17 @@
                     android:gravity="center_vertical">
 
                     <ImageView
-                        android:id="@+id/imageView5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_edit" />
 
                     <TextView
-                        android:id="@+id/button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/yoongodic320"
                         android:text="리뷰 작성"
                         android:textColor="#444444"
                         android:textSize="20sp"
+                        android:fontFamily="@font/yoongodic320"
                         android:layout_marginStart="5dp"/>
 
                 </LinearLayout>
