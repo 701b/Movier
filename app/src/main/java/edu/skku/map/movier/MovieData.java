@@ -1,9 +1,8 @@
 package edu.skku.map.movier;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
-public class MovieData {
+public class MovieData implements Serializable {
 
     private String title;
     private String image;

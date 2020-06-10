@@ -1,6 +1,7 @@
 package edu.skku.map.movier;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -82,6 +84,18 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
                         holder.pubDateText.setText(movieData.getPubDate());
                     }
                 });
+
+                holder.movieItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(activity, MovieDetailActivity.class);
+
+                        intent.putExtra("movie_data", movieData);
+
+                        activity.startActivity(intent);
+                        activity.overridePendingTransition(R.anim.slide_from_bottom, R.anim.do_nothing);
+                    }
+                });
             }
         });
     }
@@ -92,6 +106,7 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout movieItem;
         ImageView posterImage;
         TextView titleText;
         TextView scoreText;
@@ -100,6 +115,7 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            movieItem = itemView.findViewById(R.id.movie_item);
             posterImage = itemView.findViewById(R.id.movie_item_poster_image);
             titleText = itemView.findViewById(R.id.movie_item_title_text);
             scoreText = itemView.findViewById(R.id.movie_item_score_text);
