@@ -1,5 +1,8 @@
 package edu.skku.map.movier;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MovieData {
 
     private String title;
@@ -26,7 +29,14 @@ public class MovieData {
         return director;
     }
 
-    public String getActor() {
-        return actor;
+    public String getActors() {
+        String result = "";
+        String[] actors = actor.split("\\|");
+
+        for (String actor : actors) {
+            result += actor + " ";
+        }
+
+        return result;
     }
 }
