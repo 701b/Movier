@@ -28,11 +28,13 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
 
     private AppCompatActivity activity;
     private List<MovieData> movieDataList;
+    private OnItemClickMovieItemListener onItemClickMovieItemListener;
 
 
-    public MovieItemAdapter(AppCompatActivity activity, List<MovieData> movieDataList) {
+    public MovieItemAdapter(AppCompatActivity activity, List<MovieData> movieDataList, OnItemClickMovieItemListener onItemClickMovieItemListener) {
         this.activity = activity;
         this.movieDataList = movieDataList;
+        this.onItemClickMovieItemListener = onItemClickMovieItemListener;
     }
 
 
@@ -50,54 +52,9 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final MovieData movieData = movieDataList.get(position);
+        ConnectionWithNaverTask connectionWithNaverTask = new ConnectionWithNaverTask(holder, movieData, onItemClickMovieItemListener);
 
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap bitmap = null;
-
-                try {
-                    URL posterImageUrl = new URL(movieData.getImage());
-                    URLConnection connection = posterImageUrl.openConnection();
-                    InputStream inputStream;
-                    BufferedInputStream bufferedInputStream;
-
-                    connection.setDoInput(true);
-                    connection.connect();
-                    inputStream = connection.getInputStream();
-                    bufferedInputStream = new BufferedInputStream(inputStream);
-                    bitmap = BitmapFactory.decodeStream(bufferedInputStream);
-
-                    bufferedInputStream.close();
-                    inputStream.close();
-                } catch (IOException e) {
-                    Log.e("TEST", "Error getting bitmap", e);
-                }
-
-                movieData.setPosterBitmap(bitmap);
-
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        holder.posterImage.setImageBitmap(movieData.getPosterBitmap());
-                        holder.titleText.setText(movieData.getTitle());
-                        holder.pubDateText.setText(movieData.getPubDate());
-                    }
-                });
-
-                holder.movieItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(activity, MovieDetailActivity.class);
-
-                        intent.putExtra("movie_data", movieData);
-
-                        activity.startActivity(intent);
-                        activity.overridePendingTransition(R.anim.slide_from_bottom, R.anim.do_nothing);
-                    }
-                });
-            }
-        });
+        connectionWithNaverTask.execute();
     }
 
     @Override
@@ -105,14 +62,15 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
         return movieDataList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout movieItem;
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        private LinearLayout movieItem;
         ImageView posterImage;
         TextView titleText;
         TextView scoreText;
         TextView pubDateText;
 
-        public ViewHolder(@NonNull View itemView) {
+
+        private ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             movieItem = itemView.findViewById(R.id.movie_item);
@@ -122,6 +80,64 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
             pubDateText = itemView.findViewById(R.id.movie_item_pub_date_text);
 
             posterImage.setClipToOutline(true);
+        }
+    }
+
+    private static class ConnectionWithNaverTask extends AsyncTask<Void, Void, Bitmap> {
+
+        private ViewHolder viewHolder;
+        private MovieData movieData;
+        private OnItemClickMovieItemListener onItemClickMovieItemListener;
+
+
+        public ConnectionWithNaverTask(ViewHolder viewHolder, MovieData movieData, OnItemClickMovieItemListener onItemClickMovieItemListener) {
+            this.viewHolder = viewHolder;
+            this.movieData = movieData;
+            this.onItemClickMovieItemListener = onItemClickMovieItemListener;
+        }
+
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            Bitmap bitmap = null;
+
+            try {
+                URL posterImageUrl = new URL(movieData.getImage());
+                URLConnection connection = posterImageUrl.openConnection();
+                InputStream inputStream;
+                BufferedInputStream bufferedInputStream;
+
+                connection.setDoInput(true);
+                connection.connect();
+                inputStream = connection.getInputStream();
+                bufferedInputStream = new BufferedInputStream(inputStream);
+                bitmap = BitmapFactory.decodeStream(bufferedInputStream);
+
+                bufferedInputStream.close();
+                inputStream.close();
+            } catch (IOException e) {
+                Log.e("TEST", "Error getting bitmap", e);
+            }
+
+            movieData.setPosterBitmap(bitmap);
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            viewHolder.posterImage.setImageBitmap(movieData.getPosterBitmap());
+            viewHolder.titleText.setText(movieData.getTitle());
+            viewHolder.pubDateText.setText(movieData.getPubDate());
+
+            viewHolder.movieItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickMovieItemListener.onItemClickMovieItem(movieData);
+                }
+            });
         }
     }
 }

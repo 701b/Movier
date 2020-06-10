@@ -73,7 +73,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
         movieDataList = new ArrayList<>();
-        movieItemAdapter = new MovieItemAdapter(this, movieDataList);
+        movieItemAdapter = new MovieItemAdapter(this, movieDataList, new OnItemClickMovieItemListener() {
+            @Override
+            public void onItemClickMovieItem(MovieData movieData) {
+                Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
+
+                intent.putExtra("movie_data", movieData);
+                intent.putExtra("account", userAccountPost);
+
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_from_bottom, R.anim.do_nothing);
+            }
+        });
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setAdapter(movieItemAdapter);
 
