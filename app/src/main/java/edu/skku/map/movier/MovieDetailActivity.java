@@ -45,6 +45,8 @@ import java.util.List;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
+    private static final int INITIAL_NUMBER_OF_REVIEW_POST_SHOWN = 3;
+
     private CustomNavigationViewSetting customNavigationViewSetting;
 
     private MovieData movieData;
@@ -76,8 +78,11 @@ public class MovieDetailActivity extends AppCompatActivity {
         final LinearLayout writeReviewLayout = findViewById(R.id.movie_detail_write_review_layout);
         final TextView reviewNumberText = findViewById(R.id.movie_detail_review_number_text);
         final LinearLayout innerLayout = findViewById(R.id.movie_detail_more_review_inner_layout);
-        final ImageView loadingImage = findViewById(R.id.movie_detail_loading_image);
+        final ImageView moreReviewLoadingImage = findViewById(R.id.movie_detail_more_review_loading_image);
         final TextView scoreText = findViewById(R.id.movie_detail_score_text);
+        final ImageView mainLoadingImage = findViewById(R.id.movie_detail_main_loading_image);
+        final LinearLayout contentLayout = findViewById(R.id.movie_detail_content_layout);
+        final NestedScrollView scrollView = findViewById(R.id.movie_detail_scroll_view);
 
         ImageButton backButton = findViewById(R.id.movie_detail_back_button);
         ImageButton toggleDrawerButton = findViewById(R.id.movie_detail_toggle_drawer_button);
@@ -87,7 +92,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         TextView directorText = findViewById(R.id.movie_detail_director_text);
         TextView pubDateText = findViewById(R.id.movie_detail_pub_date_text);
         TextView actorText = findViewById(R.id.movie_detail_actor_text);
-        LinearLayout contentLayout = findViewById(R.id.movie_detail_content_layout);
+
+        mainLoadingImage.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_loading));
 
         reviewDataList = new ArrayList<>();
         customNavigationViewSetting = new CustomNavigationViewSetting(MovieDetailActivity.this, toggleDrawerButton);
@@ -99,10 +105,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         actorText.setText(movieData.getActors());
 
         new DownloadImageTask(movieData, posterImage).execute();
-
-        final int INITIAL_NUMBER_OF_REVIEW_POST_SHOWN = 3;
-
-
 
         reviewDataList = new ArrayList<>();
         movieReviewAdapter = new MovieReviewAdapter(this, reviewDataList);
@@ -177,6 +179,30 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }
 
                 movieReviewAdapter.notifyDataSetChanged();
+
+                AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {}
+
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+
+                        mainLoadingImage.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_out));
+                        contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
+                        mainLoadingImage.setVisibility(View.INVISIBLE);
+                        contentLayout.setVisibility(View.VISIBLE);
+                        scrollView.scrollTo(0, 0);
+                    }
+                };
+
+                asyncTask.execute();
             }
 
             @Override
@@ -187,9 +213,9 @@ public class MovieDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 innerLayout.setVisibility(View.INVISIBLE);
-                loadingImage.setVisibility(View.VISIBLE);
+                moreReviewLoadingImage.setVisibility(View.VISIBLE);
 
-                loadingImage.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_loading));
+                moreReviewLoadingImage.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_loading));
 
                 databaseReference.child(ReviewPost.REVIEW_TABLE_NAME).child(movieData.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -234,10 +260,6 @@ public class MovieDetailActivity extends AppCompatActivity {
                         }
 
                         movieReviewAdapter.notifyDataSetChanged();
-
-                        innerLayout.setVisibility(View.VISIBLE);
-                        loadingImage.setVisibility(View.INVISIBLE);
-                        loadingImage.clearAnimation();
                     }
 
                     @Override
@@ -249,7 +271,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         writeReviewLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NestedScrollView scrollView = findViewById(R.id.movie_detail_scroll_view);
                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                 final ViewGroup viewGroup = (ViewGroup) writeReviewLayout.getParent();
                 final View view = inflater.inflate(R.layout.write_review, viewGroup, false);
