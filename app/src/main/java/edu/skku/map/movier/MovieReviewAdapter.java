@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -58,6 +59,12 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
         holder.scoreStarImage3.setVisibility(View.VISIBLE);
         holder.scoreStarImage4.setVisibility(View.VISIBLE);
         holder.scoreStarImage5.setVisibility(View.VISIBLE);
+
+        if (reviewPost.getId().equals(CurrentUserInfo.getInstance().getId())) {
+            // 현재 로그인한 계정으로 작성한 리뷰는 배경으로 강조
+            holder.reviewItemLayout.setBackgroundColor(Color.parseColor("#FFEEEE"));
+            holder.thumbImage.setBackgroundColor(Color.parseColor("#FFEEEE"));
+        }
 
         switch (reviewPost.getScore()) {
             // break없는 것은 의도적인 것임.
@@ -116,6 +123,7 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout reviewItemLayout;
         TextView idText;
         ImageView profileImage;
         ImageView scoreStarImage1;
@@ -130,6 +138,7 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            reviewItemLayout = itemView.findViewById(R.id.review_item);
             idText = itemView.findViewById(R.id.review_item_id_text);
             profileImage = itemView.findViewById(R.id.review_item_profile_image);
             scoreStarImage1 = itemView.findViewById(R.id.review_item_star1);
