@@ -43,8 +43,6 @@ import java.util.List;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
-    private DatabaseReference databaseReference;
-
     private CustomNavigationViewSetting customNavigationViewSetting;
 
     private MovieData movieData;
@@ -70,18 +68,25 @@ public class MovieDetailActivity extends AppCompatActivity {
         Intent receivedIntent = getIntent();
         movieData = (MovieData) receivedIntent.getSerializableExtra("movie_data");
 
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        final RecyclerView recyclerView = findViewById(R.id.movie_detail_recycler_view);
+        final RelativeLayout moreReviewLayout = findViewById(R.id.movie_detail_more_review_layout);
+        final LinearLayout writeReviewLayout = findViewById(R.id.movie_detail_write_review_layout);
+        final TextView reviewNumberText = findViewById(R.id.movie_detail_review_number_text);
+        final LinearLayout innerLayout = findViewById(R.id.movie_detail_more_review_inner_layout);
+        final ImageView loadingImage = findViewById(R.id.movie_detail_loading_image);
+        final TextView scoreText = findViewById(R.id.movie_detail_score_text);
+
         ImageButton backButton = findViewById(R.id.movie_detail_back_button);
         ImageButton toggleDrawerButton = findViewById(R.id.movie_detail_toggle_drawer_button);
         ImageView posterImage = findViewById(R.id.movie_detail_poster_image);
         TextView titleText = findViewById(R.id.movie_detail_title_text);
         TextView subtitleText = findViewById(R.id.movie_detail_subtitle_text);
-        TextView scoreText = findViewById(R.id.movie_detail_score_text);
         TextView directorText = findViewById(R.id.movie_detail_director_text);
         TextView pubDateText = findViewById(R.id.movie_detail_pub_date_text);
         TextView actorText = findViewById(R.id.movie_detail_actor_text);
         LinearLayout contentLayout = findViewById(R.id.movie_detail_content_layout);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference();
         reviewDataList = new ArrayList<>();
         customNavigationViewSetting = new CustomNavigationViewSetting(MovieDetailActivity.this, toggleDrawerButton);
 
@@ -93,27 +98,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         new DownloadImageTask(movieData, posterImage).execute();
 
-        initRelativeLayout();
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, R.anim.slide_to_bottom);
-            }
-        });
-    }
-
-    private void initRelativeLayout() {
         final int INITIAL_NUMBER_OF_REVIEW_POST_SHOWN = 3;
 
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        final RecyclerView recyclerView = findViewById(R.id.movie_detail_recycler_view);
-        final RelativeLayout moreReviewLayout = findViewById(R.id.movie_detail_more_review_layout);
-        final LinearLayout writeReviewLayout = findViewById(R.id.movie_detail_write_review_layout);
-        final TextView reviewNumberText = findViewById(R.id.movie_detail_review_number_text);
-        final LinearLayout innerLayout = findViewById(R.id.movie_detail_more_review_inner_layout);
-        final ImageView loadingImage = findViewById(R.id.movie_detail_loading_image);
+
 
         reviewDataList = new ArrayList<>();
         movieReviewAdapter = new MovieReviewAdapter(this, reviewDataList);
@@ -136,6 +123,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<ReviewPost> reviewList = new ArrayList<>();
                 ReviewPost myReviewPost = null;
+                int sumOfScore = 0;
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     ReviewPost reviewPost = data.getValue(ReviewPost.class);
@@ -146,6 +134,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                     if (reviewPost.getId().equals(CurrentUserInfo.getInstance().getId())) {
                         myReviewPost = reviewPost;
                     }
+
+                    sumOfScore += reviewPost.getScore();
                 }
 
                 reviewList.sort(new Comparator<ReviewPost>() {
@@ -170,6 +160,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }
 
                 reviewNumberText.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                scoreText.setText(String.format("%.1f", ((float) sumOfScore) / dataSnapshot.getChildrenCount()));
 
                 // 리뷰 수가 INITIAL_NUMBER_OF_REVIEW_POST_SHOWN보다 작거나 같으면 더보기 버튼 삭제
                 if (dataSnapshot.getChildrenCount() <= INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
@@ -350,6 +341,14 @@ public class MovieDetailActivity extends AppCompatActivity {
                         }
                     }
                 });
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, R.anim.slide_to_bottom);
             }
         });
     }

@@ -99,17 +99,39 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/movie_detail_score_text"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     android:layout_marginTop="5dp"
                     android:background="#FFFFFF"
-                    android:fontFamily="@font/yoongodic320"
                     android:paddingHorizontal="20dp"
-                    android:paddingVertical="5dp"
-                    android:text="평균 5.0"
-                    android:textColor="#FF0000" />
+                    android:paddingVertical="15dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="평균 "
+                        android:textSize="18sp"
+                        android:textColor="#444444"
+                        android:fontFamily="@font/yoongodic320"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_star_red" />
+
+                    <TextView
+                        android:id="@+id/movie_detail_score_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5.0"
+                        android:textSize="18sp"
+                        android:textColor="#FF0000"
+                        android:fontFamily="@font/yoongodic320"/>
+
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
