@@ -62,7 +62,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private ImageView starImage4;
     private ImageView starImage5;
 
-    private int reviewScore;
+    private int reviewScore = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +164,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }
 
                 reviewNumberText.setText(String.valueOf(dataSnapshot.getChildrenCount()));
-                scoreText.setText(String.format("%.1f", ((float) sumOfScore) / dataSnapshot.getChildrenCount()));
+
+                if (dataSnapshot.getChildrenCount() != 0) {
+                    scoreText.setText(String.format("%.1f", ((float) sumOfScore) / dataSnapshot.getChildrenCount()));
+                } else {
+                    scoreText.setText("0.0");
+                }
 
                 // 리뷰 수가 INITIAL_NUMBER_OF_REVIEW_POST_SHOWN보다 작거나 같으면 더보기 버튼 삭제
                 if (dataSnapshot.getChildrenCount() <= INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
@@ -260,6 +265,9 @@ public class MovieDetailActivity extends AppCompatActivity {
                         }
 
                         movieReviewAdapter.notifyDataSetChanged();
+                        moreReviewLoadingImage.clearAnimation();
+                        innerLayout.setVisibility(View.VISIBLE);
+                        moreReviewLoadingImage.setVisibility(View.INVISIBLE);
                     }
 
                     @Override
@@ -351,23 +359,34 @@ public class MovieDetailActivity extends AppCompatActivity {
                 writeReviewLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!contentInput.getText().toString().equals("")) {
-                            ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), reviewScore, contentInput.getText().toString());
+                        if (reviewScore != 0) {
+                            if (!contentInput.getText().toString().equals("")) {
+                                ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), reviewScore, contentInput.getText().toString());
 
-                            reviewDataList.add(0, reviewPost);
-                            reviewPost.postFirebaseDatabase(movieData.getTitle());
+                                reviewDataList.add(0, reviewPost);
+                                reviewPost.postFirebaseDatabase(movieData.getTitle());
 
-                            movieReviewAdapter.notifyDataSetChanged();
+                                movieReviewAdapter.notifyDataSetChanged();
 
-                            viewGroup.removeView(view);
+                                viewGroup.removeView(view);
 
-                            reviewNumberText.setText(String.valueOf(Integer.parseInt(reviewNumberText.getText().toString()) + 1));
+                                reviewNumberText.setText(String.valueOf(Integer.parseInt(reviewNumberText.getText().toString()) + 1));
+                            } else {
+                                new AlertDialog.Builder(MovieDetailActivity.this)
+                                        .setMessage("리뷰 내용을 작성하세요")
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            }
+                                        }).show();
+                            }
                         } else {
                             new AlertDialog.Builder(MovieDetailActivity.this)
-                                    .setMessage("리뷰 내용을 작성하세요")
+                                    .setMessage("별을 눌러 평점을 매겨주세요")
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         @Override
-                                        public void onClick(DialogInterface dialog, int which) {}
+                                        public void onClick(DialogInterface dialog, int which) {
+                                        }
                                     }).show();
                         }
                     }
