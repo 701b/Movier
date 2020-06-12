@@ -7,6 +7,8 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -271,7 +273,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                 view.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_top_for_writing_review));
 
-                //recyclerView.bringToFront();
+                recyclerView.bringToFront();
+                moreReviewLayout.bringToFront();
 
                 AsyncTask.execute(new Runnable() {
                     @Override
@@ -327,7 +330,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 writeReviewLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!contentInput.getText().equals("")) {
+                        if (!contentInput.getText().toString().equals("")) {
                             ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), reviewScore, contentInput.getText().toString());
 
                             reviewDataList.add(0, reviewPost);
@@ -338,6 +341,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                             viewGroup.removeView(view);
 
                             reviewNumberText.setText(String.valueOf(Integer.parseInt(reviewNumberText.getText().toString()) + 1));
+                        } else {
+                            new AlertDialog.Builder(MovieDetailActivity.this)
+                                    .setMessage("리뷰 내용을 작성하세요")
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {}
+                                    }).show();
                         }
                     }
                 });
