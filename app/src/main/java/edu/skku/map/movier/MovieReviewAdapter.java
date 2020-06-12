@@ -3,6 +3,7 @@ package edu.skku.map.movier;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +13,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.ViewHolder> {
 
     private Context context;
     private List<ReviewPost> reviewPostList;
+    private Map<String, Bitmap> profileImageMap;
 
 
     public MovieReviewAdapter(Context context, List<ReviewPost> reviewPostList) {
         this.context = context;
         this.reviewPostList = reviewPostList;
+
+        profileImageMap = new HashMap<>();
     }
 
 
@@ -42,9 +48,16 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
         final ReviewPost reviewPost = reviewPostList.get(position);
         final CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
 
+        Log.d("TEST", "id : " + reviewPost.getId() + ", score : " + reviewPost.getScore());
+
         holder.idText.setText(reviewPost.getId());
         holder.contentText.setText(reviewPost.getContent());
         holder.numberOfThumbText.setText(String.valueOf(reviewPost.getNumberOfThumb()));
+
+        holder.scoreStarImage2.setVisibility(View.VISIBLE);
+        holder.scoreStarImage3.setVisibility(View.VISIBLE);
+        holder.scoreStarImage4.setVisibility(View.VISIBLE);
+        holder.scoreStarImage5.setVisibility(View.VISIBLE);
 
         switch (reviewPost.getScore()) {
             // break없는 것은 의도적인 것임.
@@ -61,12 +74,17 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
                 holder.scoreStarImage5.setVisibility(View.INVISIBLE);
         }
 
-        UserAccountPost.addOnDownloadProfileImage(reviewPost.getId(), new OnDownloadProfileImageListener() {
-            @Override
-            public void onDownloadProfileImage(Bitmap profileImage) {
-                holder.profileImage.setImageBitmap(profileImage);
-            }
-        });
+        if (!profileImageMap.containsKey(reviewPost.getId())) {
+            UserAccountPost.addOnDownloadProfileImage(reviewPost.getId(), new OnDownloadProfileImageListener() {
+                @Override
+                public void onDownloadProfileImage(Bitmap profileImage) {
+                    holder.profileImage.setImageBitmap(profileImage);
+                    profileImageMap.put(reviewPost.getId(), profileImage);
+                }
+            });
+        } else {
+            holder.profileImage.setImageBitmap(profileImageMap.get(reviewPost.getId()));
+        }
 
         if (reviewPost.getIsPressThumb(currentUserInfo.getId())) {
             holder.thumbImage.setImageDrawable(context.getDrawable(R.drawable.ic_thumb_up_red));

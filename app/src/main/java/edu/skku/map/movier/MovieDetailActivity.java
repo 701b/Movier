@@ -243,7 +243,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                 final ViewGroup viewGroup = (ViewGroup) writeReviewLayout.getParent();
                 final View view = inflater.inflate(R.layout.write_review, viewGroup, false);
-                LinearLayout writeRevewLayout = view.findViewById(R.id.write_review_write_review_layout);
+                LinearLayout writeReviewLayout = view.findViewById(R.id.write_review_write_review_layout);
                 final EditText contentInput = view.findViewById(R.id.write_review_content_input);
 
                 starImage1 = view.findViewById(R.id.write_review_star_image1);
@@ -272,7 +272,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                             Thread.sleep(50);
                         } catch (InterruptedException e) {}
 
-                        scrollView.smoothScrollTo(0, 2000);
+                        scrollView.smoothScrollTo(0, 99999999);
                     }
                 });
 
@@ -316,7 +316,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     }
                 });
 
-                writeRevewLayout.setOnClickListener(new View.OnClickListener() {
+                writeReviewLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (!contentInput.getText().equals("")) {
