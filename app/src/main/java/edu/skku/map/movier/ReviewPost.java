@@ -30,6 +30,8 @@ public class ReviewPost {
         this.id = id;
         this.score = score;
         this.content = content;
+
+        init();
     }
 
 

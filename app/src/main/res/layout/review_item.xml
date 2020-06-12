@@ -6,8 +6,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="#FFFFFF"
+    android:paddingHorizontal="20dp"
     android:paddingVertical="10dp"
-    android:layout_marginTop="5dp">
+    android:layout_marginTop="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,31 +37,31 @@
             android:id="@+id/review_item_star1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_star" />
+            app:srcCompat="@drawable/ic_star_red" />
 
         <ImageView
             android:id="@+id/review_item_star2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_star" />
+            app:srcCompat="@drawable/ic_star_red" />
 
         <ImageView
             android:id="@+id/review_item_star3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_star" />
+            app:srcCompat="@drawable/ic_star_red" />
 
         <ImageView
             android:id="@+id/review_item_star4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_star" />
+            app:srcCompat="@drawable/ic_star_red" />
 
         <ImageView
             android:id="@+id/review_item_star5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_star" />
+            app:srcCompat="@drawable/ic_star_red" />
 
     </LinearLayout>
 
