@@ -11,32 +11,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.net.URI;
 
 public class CustomNavigationViewSetting {
 
     public static final int PICK_PROFILE_IMAGE = 777;
 
     private AppCompatActivity activity;
-    private UserAccountPost userAccountPost;
     private ImageButton toggleDrawerButton;
 
     private ImageView drawerProfileImage;
 
-    public CustomNavigationViewSetting(AppCompatActivity activity, UserAccountPost userAccountPost, ImageButton toggleDrawerButton) {
+    public CustomNavigationViewSetting(AppCompatActivity activity, ImageButton toggleDrawerButton) {
         this.activity = activity;
-        this.userAccountPost = userAccountPost;
         this.toggleDrawerButton = toggleDrawerButton;
 
         init();
@@ -47,15 +40,17 @@ public class CustomNavigationViewSetting {
     }
 
     private void init() {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        NavigationView navigationView = activity.findViewById(R.id.main_navigation_view);
+        NavigationView navigationView = activity.findViewById(R.id.navigation_view);
         View headerView = navigationView.getHeaderView(0);
         Button drawerLogoutButton = headerView.findViewById(R.id.drawer_logout_button);
-        final DrawerLayout drawerLayout = activity.findViewById(R.id.main_drawer_layout);
+        TextView idText = headerView.findViewById(R.id.drawer_id_text);
+        final DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
 
         drawerProfileImage = headerView.findViewById(R.id.drawer_profile_image);
 
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+        idText.setText(CurrentUserInfo.getInstance().getId());
 
         drawerProfileImage.setClipToOutline(true);
         drawerProfileImage.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +73,9 @@ public class CustomNavigationViewSetting {
                 editor.remove("password");
                 editor.apply();
 
+                CurrentUserInfo.getInstance().setId(null);
+                CurrentUserInfo.getInstance().setProfileImage(null);
+
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -85,15 +83,16 @@ public class CustomNavigationViewSetting {
             }
         });
 
-        storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(userAccountPost.getId())
-                .getBytes(4 * 1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-
-                drawerProfileImage.setImageBitmap(bitmap);
-            }
-        });
+        if (CurrentUserInfo.getInstance().getProfileImage() == null) {
+            UserAccountPost.addOnDownloadProfileImage(CurrentUserInfo.getInstance().getId(), new OnDownloadProfileImageListener() {
+                @Override
+                public void onDownloadProfileImage(Bitmap profileImage) {
+                    drawerProfileImage.setImageBitmap(profileImage);
+                }
+            });
+        } else {
+            drawerProfileImage.setImageBitmap(CurrentUserInfo.getInstance().getProfileImage());
+        }
 
         toggleDrawerButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -70,13 +70,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
         movieDataList = new ArrayList<>();
-        movieItemAdapter = new MovieItemAdapter(this, movieDataList, new OnItemClickMovieItemListener() {
+        movieItemAdapter = new MovieItemAdapter(movieDataList, new OnItemClickMovieItemListener() {
             @Override
             public void onItemClickMovieItem(MovieData movieData) {
                 Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
 
                 intent.putExtra("movie_data", movieData);
-                intent.putExtra("account", userAccountPost);
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_from_bottom, R.anim.do_nothing);
@@ -146,65 +145,56 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void autoLogin() {
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        if (CurrentUserInfo.getInstance().getId() == null) {
+            // CurrentUserInfo instance에 계정이 저장되어 있지 않다면 자동 로그인 실행
+            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
-        // preference에 아이디와 비밀번호가 저장된 경우 자동 로그인
-        // 아닌 경우 회원가입 페이지로 간다.
-        if (preferences.contains("id") && preferences.contains("password")) {
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-            final String id = preferences.getString("id", null);
-            final String password = preferences.getString("password", null);
+            if (preferences.contains("id") && preferences.contains("password")) {
+                // preference에 아이디와 비밀번호가 저장된 경우 자동 로그인
+                // 아닌 경우 회원가입 페이지로 간다.
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                final String id = preferences.getString("id", null);
+                final String password = preferences.getString("password", null);
 
-            // 데이터베이스와 연결하는데 지연되는 시간동안 dialog를 표시
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("잠시만 기다려주세요");
-            progressDialog.show();
+                // 데이터베이스와 연결하는데 지연되는 시간동안 dialog를 표시
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setMessage("잠시만 기다려주세요");
+                progressDialog.show();
 
-            databaseReference.child(UserAccountPost.ACCOUNT_TABLE_NAME).child(id)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            UserAccountPost post = dataSnapshot.getValue(UserAccountPost.class);
+                databaseReference.child(UserAccountPost.ACCOUNT_TABLE_NAME).child(id)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                UserAccountPost post = dataSnapshot.getValue(UserAccountPost.class);
 
-                            if (post != null) {
-                                // 데이터베이스에 같은 id가 존재할 때
-                                if (post.getPassword().equals(password)) {
-                                    // 비밀번호가 데이터베이스의 비밀번호와 같을 때
-                                    CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
+                                if (post != null) {
+                                    // 데이터베이스에 같은 id가 존재할 때
+                                    if (post.getPassword().equals(password)) {
+                                        // 비밀번호가 데이터베이스의 비밀번호와 같을 때
+                                        CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
 
-                                    currentUserInfo.setId(post.getId());
+                                        currentUserInfo.setId(post.getId());
 
-                                    customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
+                                        customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
 
-                                    progressDialog.dismiss();
+                                        progressDialog.dismiss();
+                                    } else {
+                                        // 비밀번호가 데이터베이스의 비밀번호와 다를 때
+                                        goToSignUpPage();
+                                    }
                                 } else {
-                                    // 비밀번호가 데이터베이스의 비밀번호와 다를 때
+                                    // 데이터베이스에 같은 id가 존재하지 않을 때
                                     goToSignUpPage();
                                 }
-                            } else {
-                                // 데이터베이스에 같은 id가 존재하지 않을 때
-                                goToSignUpPage();
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        }
-                    });
-        } else {
-            goToSignUpPage();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == CustomNavigationViewSetting.PICK_PROFILE_IMAGE) {
-            if (resultCode == RESULT_OK) {
-                storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(CurrentUserInfo.getInstance().getId()).putFile(data.getData());
-                customNavigationViewSetting.setProfileImage(data.getData());
+                            }
+                        });
+            } else {
+                goToSignUpPage();
             }
         }
     }
@@ -217,5 +207,17 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(intent);
         overridePendingTransition(R.anim.slide_from_bottom, R.anim.do_nothing);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CustomNavigationViewSetting.PICK_PROFILE_IMAGE) {
+            if (resultCode == RESULT_OK) {
+                storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(CurrentUserInfo.getInstance().getId()).putFile(data.getData());
+                customNavigationViewSetting.setProfileImage(data.getData());
+            }
+        }
     }
 }

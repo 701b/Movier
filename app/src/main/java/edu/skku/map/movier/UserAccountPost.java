@@ -1,8 +1,14 @@
 package edu.skku.map.movier;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -10,13 +16,14 @@ import java.util.Map;
 
 public class UserAccountPost implements Serializable {
 
+    // account_table/{id}
     public static final String ACCOUNT_TABLE_NAME = "account_table";
+    // profile_image/{id}
     public static final String PROFILE_IMAGE_ADDRESS = "profile_image";
 
     private String id;
     private String password;
     private boolean isMan;
-    private String profileImageAddress;
 
 
     public UserAccountPost() {}
@@ -34,12 +41,12 @@ public class UserAccountPost implements Serializable {
         result.put("id", id);
         result.put("password", password);
         result.put("is_man", isMan);
-        result.put("profile_image_address", profileImageAddress);
 
         return result;
     }
 
-    public void postFirebaseDatabase(DatabaseReference databaseReference) {
+    public void postFirebaseDatabase() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         Map<String, Object> childUpdates = new HashMap<>();
         Map<String, Object> postValues = null;
 
@@ -57,11 +64,16 @@ public class UserAccountPost implements Serializable {
         return password;
     }
 
-    public String getProfileImageAddress() {
-        return profileImageAddress;
-    }
+    public static void addOnDownloadProfileImage(String id, final OnDownloadProfileImageListener onDownloadProfileImageListener) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
 
-    public void setProfileImageAddress(String profileImageAddress) {
-        this.profileImageAddress = profileImageAddress;
+        storageReference.child(PROFILE_IMAGE_ADDRESS).child(id).getBytes(4 * 1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                onDownloadProfileImageListener.onDownloadProfileImage(bitmap);
+            }
+        });
     }
 }

@@ -1,299 +1,346 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MovieDetailActivity"
-    android:background="#F1F1F1"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:orientation="horizontal"
-        android:background="@drawable/bottom_grey_border_white_background"
-        android:gravity="center_vertical">
-
-        <ImageButton
-            android:id="@+id/movie_detail_back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_back"
-            android:background="#FFFFFF"
-            android:layout_marginStart="15dp"
-            android:scaleType="fitStart"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <ImageButton
-            android:id="@+id/movie_detail_toggle_drawer_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:background="#FFFFFF"
-            app:srcCompat="@drawable/ic_person" />
-
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#F1F1F1">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/bottom_grey_border_white_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
+            <ImageButton
+                android:id="@+id/movie_detail_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
                 android:background="#FFFFFF"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="20dp">
-
-                <ImageView
-                    android:id="@+id/movie_detail_poster_image"
-                    android:layout_width="81dp"
-                    android:layout_height="120dp"
-                    android:scaleType="centerCrop"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="bottom"
-                    android:paddingHorizontal="10dp">
-
-                    <TextView
-                        android:id="@+id/movie_detail_title_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="타이틀"
-                        android:textColor="#444444"
-                        android:textSize="24sp"
-                        android:fontFamily="@font/yoongodic320"
-                        android:textFontWeight="700"/>
-
-                    <TextView
-                        android:id="@+id/movie_detail_subtitle_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2020"
-                        android:textColor="#888888"
-                        android:textSize="16sp"
-                        android:fontFamily="@font/yoongodic320"/>
-                </LinearLayout>
-
-            </LinearLayout>
+                android:scaleType="fitStart"
+                android:src="@drawable/ic_arrow_back" />
 
             <TextView
-                android:id="@+id/movie_detail_score_text"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="평균 5.0"
-                android:textColor="#FF0000"
-                android:fontFamily="@font/yoongodic320"
-                android:background="#FFFFFF"
-                android:paddingVertical="5dp"
-                android:paddingHorizontal="20dp"
-                android:layout_marginTop="5dp"/>
+                android:layout_weight="1" />
 
-            <TextView
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/movie_detail_toggle_drawer_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="기본정보"
-                android:textColor="#444444"
-                android:textSize="20sp"
-                android:textFontWeight="700"
+                android:layout_marginEnd="10dp"
                 android:background="#FFFFFF"
-                android:fontFamily="@font/yoongodic320"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="20dp"
-                android:layout_marginTop="5dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="#FFFFFF"
-                android:paddingVertical="5dp"
-                android:paddingHorizontal="20dp"
-                android:layout_marginTop="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="5dp">
-
-                    <TextView
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
-                        android:text="감독"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="|"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"/>
-
-                    <TextView
-                        android:id="@+id/movie_detail_director_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="홍길동"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"
-                        android:paddingStart="5dp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="5dp">
-
-                    <TextView
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
-                        android:text="제작년도"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="|"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"/>
-
-                    <TextView
-                        android:id="@+id/movie_detail_pub_date_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2020"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"
-                        android:paddingStart="5dp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
-                        android:text="배우"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="|"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"/>
-
-                    <TextView
-                        android:id="@+id/movie_detail_actor_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="민수 철수"
-                        android:textColor="#444444"
-                        android:fontFamily="@font/yoongodic320"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:paddingStart="5dp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="#FFFFFF"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="20dp"
-                android:layout_marginTop="5dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="리뷰"
-                    android:textColor="#444444"
-                    android:textSize="20sp"
-                    android:textFontWeight="700"
-                    android:fontFamily="@font/yoongodic320"/>
-
-                <TextView
-                    android:id="@+id/movie_detail_review_number_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="256"
-                    android:textColor="#888888"
-                    android:textSize="16sp"
-                    android:layout_marginStart="5dp"/>
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/movie_detail_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="20dp"
-                android:layout_marginTop="1dp" />
-
-            <LinearLayout
-                android:id="@+id/movie_detail_write_review_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="#FFFFFF"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="5dp"
-                android:layout_marginTop="1dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_edit" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="리뷰 작성"
-                        android:textColor="#444444"
-                        android:textSize="20sp"
-                        android:fontFamily="@font/yoongodic320"
-                        android:layout_marginStart="5dp"/>
-
-                </LinearLayout>
-            </LinearLayout>
+                app:srcCompat="@drawable/ic_person" />
 
         </LinearLayout>
 
-    </ScrollView>
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-</LinearLayout>
+            <LinearLayout
+                android:id="@+id/movie_detail_content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#FFFFFF"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp">
+
+                    <ImageView
+                        android:id="@+id/movie_detail_poster_image"
+                        android:layout_width="81dp"
+                        android:layout_height="120dp"
+                        android:scaleType="centerCrop" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="10dp">
+
+                        <TextView
+                            android:id="@+id/movie_detail_title_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="타이틀"
+                            android:textColor="#444444"
+                            android:textFontWeight="700"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/movie_detail_subtitle_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="2020"
+                            android:textColor="#888888"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/movie_detail_score_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="#FFFFFF"
+                    android:fontFamily="@font/yoongodic320"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="5dp"
+                    android:text="평균 5.0"
+                    android:textColor="#FF0000" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="#FFFFFF"
+                    android:fontFamily="@font/yoongodic320"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp"
+                    android:text="기본정보"
+                    android:textColor="#444444"
+                    android:textFontWeight="700"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="1dp"
+                    android:background="#FFFFFF"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="감독"
+                            android:textColor="#444444" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="|"
+                            android:textColor="#444444" />
+
+                        <TextView
+                            android:id="@+id/movie_detail_director_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:paddingStart="5dp"
+                            android:text="홍길동"
+                            android:textColor="#444444" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="제작년도"
+                            android:textColor="#444444" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="|"
+                            android:textColor="#444444" />
+
+                        <TextView
+                            android:id="@+id/movie_detail_pub_date_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:paddingStart="5dp"
+                            android:text="2020"
+                            android:textColor="#444444" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="배우"
+                            android:textColor="#444444" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="|"
+                            android:textColor="#444444" />
+
+                        <TextView
+                            android:id="@+id/movie_detail_actor_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/yoongodic320"
+                            android:paddingStart="5dp"
+                            android:text="민수 철수"
+                            android:textColor="#444444" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="#FFFFFF"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/yoongodic320"
+                        android:text="리뷰"
+                        android:textColor="#444444"
+                        android:textFontWeight="700"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/movie_detail_review_number_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="256"
+                        android:textColor="#888888"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/movie_detail_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:background="#FFFFFF"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp"
+                    android:nestedScrollingEnabled="false"/>
+
+                <LinearLayout
+                    android:id="@+id/movie_detail_more_review_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="1dp"
+                    android:background="#FFFFFF"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="5dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="더보기"
+                            android:textColor="#444444"
+                            android:textSize="20sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/movie_detail_write_review_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="5dp"
+                    android:background="#FFFFFF"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="5dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_edit" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:fontFamily="@font/yoongodic320"
+                            android:text="리뷰 작성"
+                            android:textColor="#444444"
+                            android:textSize="20sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="250dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        app:headerLayout="@layout/drawer"
+        android:background="#222222"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,7 +1,6 @@
 package edu.skku.map.movier;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -26,13 +25,11 @@ import java.util.List;
 
 public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.ViewHolder> {
 
-    private AppCompatActivity activity;
     private List<MovieData> movieDataList;
     private OnItemClickMovieItemListener onItemClickMovieItemListener;
 
 
-    public MovieItemAdapter(AppCompatActivity activity, List<MovieData> movieDataList, OnItemClickMovieItemListener onItemClickMovieItemListener) {
-        this.activity = activity;
+    public MovieItemAdapter(List<MovieData> movieDataList, OnItemClickMovieItemListener onItemClickMovieItemListener) {
         this.movieDataList = movieDataList;
         this.onItemClickMovieItemListener = onItemClickMovieItemListener;
     }
@@ -52,9 +49,12 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final MovieData movieData = movieDataList.get(position);
-        ConnectionWithNaverTask connectionWithNaverTask = new ConnectionWithNaverTask(holder, movieData, onItemClickMovieItemListener);
+        DownloadImageTask connectionWithNaverTask = new DownloadImageTask(holder, movieData, onItemClickMovieItemListener);
 
         connectionWithNaverTask.execute();
+
+        holder.titleText.setText(movieData.getTitle());
+        holder.pubDateText.setText(movieData.getPubDate());
     }
 
     @Override
@@ -83,14 +83,14 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
         }
     }
 
-    private static class ConnectionWithNaverTask extends AsyncTask<Void, Void, Bitmap> {
+    private static class DownloadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
         private ViewHolder viewHolder;
         private MovieData movieData;
         private OnItemClickMovieItemListener onItemClickMovieItemListener;
 
 
-        public ConnectionWithNaverTask(ViewHolder viewHolder, MovieData movieData, OnItemClickMovieItemListener onItemClickMovieItemListener) {
+        public DownloadImageTask(ViewHolder viewHolder, MovieData movieData, OnItemClickMovieItemListener onItemClickMovieItemListener) {
             this.viewHolder = viewHolder;
             this.movieData = movieData;
             this.onItemClickMovieItemListener = onItemClickMovieItemListener;
@@ -119,8 +119,6 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
                 Log.e("TEST", "Error getting bitmap", e);
             }
 
-            movieData.setPosterBitmap(bitmap);
-
             return bitmap;
         }
 
@@ -128,9 +126,7 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
 
-            viewHolder.posterImage.setImageBitmap(movieData.getPosterBitmap());
-            viewHolder.titleText.setText(movieData.getTitle());
-            viewHolder.pubDateText.setText(movieData.getPubDate());
+            viewHolder.posterImage.setImageBitmap(bitmap);
 
             viewHolder.movieItem.setOnClickListener(new View.OnClickListener() {
                 @Override

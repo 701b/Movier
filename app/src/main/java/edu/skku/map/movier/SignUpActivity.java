@@ -222,7 +222,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 passwordInput.getText().toString(),
                                                 isMan);
 
-                                        newAccountPost.postFirebaseDatabase(databaseReference);
+                                        newAccountPost.postFirebaseDatabase();
 
                                         goToLoginPage();
                                     } else {

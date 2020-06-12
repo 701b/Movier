@@ -1,6 +1,8 @@
 package edu.skku.map.movier;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.Serializable;
 
@@ -12,7 +14,6 @@ public class MovieData implements Serializable {
     private String director;
     private String actor;
 
-    private Bitmap posterBitmap;
 
     public String getTitle() {
         String filteredTitle = title.replaceAll("<b>|</b>", "");
@@ -29,7 +30,18 @@ public class MovieData implements Serializable {
     }
 
     public String getDirector() {
-        return director;
+        String result = "";
+        String[] directors = director.split("\\|");
+
+        for (String director : directors) {
+            if (result.equals("")) {
+                result += director;
+            } else {
+                result += "\n" + director;
+            }
+        }
+
+        return result;
     }
 
     public String getActors() {
@@ -37,17 +49,13 @@ public class MovieData implements Serializable {
         String[] actors = actor.split("\\|");
 
         for (String actor : actors) {
-            result += actor + " ";
+            if (result.equals("")) {
+                result += actor;
+            } else {
+                result += "\n" + actor;
+            }
         }
 
         return result;
-    }
-
-    public Bitmap getPosterBitmap() {
-        return posterBitmap;
-    }
-
-    public void setPosterBitmap(Bitmap posterBitmap) {
-        this.posterBitmap = posterBitmap;
     }
 }
