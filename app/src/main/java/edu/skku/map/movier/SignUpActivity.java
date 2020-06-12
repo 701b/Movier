@@ -106,7 +106,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(final CharSequence s, int start, int before, int count) {
                 if (!s.toString().equals("")) {
                     databaseReference.child(UserAccountPost.ACCOUNT_TABLE_NAME).child(idInput.getText().toString())
                             .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -116,6 +116,11 @@ public class SignUpActivity extends AppCompatActivity {
 
                                     if (post != null) {
                                         // 데이터베이스에 같은 id가 존재할 때
+                                        if (!post.getId().equals(s.toString())) {
+                                            // 빠른 입력으로 어긋나는 현상 방지
+                                            return;
+                                        }
+
                                         idAlertText.setText("다른 아이디를 사용해주세요");
                                         signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
                                         signUpButton.setTextColor(Color.parseColor("#BBBBBB"));

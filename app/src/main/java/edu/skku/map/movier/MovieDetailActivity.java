@@ -135,7 +135,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<ReviewPost> reviewList = new ArrayList<>();
-                boolean isAlreadyReviewed = false;
+                ReviewPost myReviewPost = null;
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     ReviewPost reviewPost = data.getValue(ReviewPost.class);
@@ -144,7 +144,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     reviewList.add(reviewPost);
 
                     if (reviewPost.getId().equals(CurrentUserInfo.getInstance().getId())) {
-                        isAlreadyReviewed = true;
+                        myReviewPost = reviewPost;
                     }
                 }
 
@@ -154,6 +154,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                         return o2.getNumberOfThumb() - o1.getNumberOfThumb();
                     }
                 });
+
+                if (myReviewPost != null) {
+                    // 현재 로그인한 계정으로 작성한 리뷰는 가장 위에 표시
+                    reviewList.remove(myReviewPost);
+                    reviewList.add(0, myReviewPost);
+                }
 
                 for (ReviewPost reviewPost : reviewList) {
                     reviewDataList.add(reviewPost);
@@ -173,7 +179,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }
 
                 // 현재 로그인한 유저가 이미 리뷰를 작성했다면 리뷰 작성 버튼 삭제
-                if (isAlreadyReviewed) {
+                if (myReviewPost != null) {
                     ((ViewGroup) writeReviewLayout.getParent()).removeView(writeReviewLayout);
                 }
 
@@ -196,6 +202,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         List<ReviewPost> reviewList = new ArrayList<>();
+                        ReviewPost myReviewPost = null;
                         int firstIndex = reviewDataList.size();
 
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
@@ -203,6 +210,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                             reviewPost.init();
                             reviewList.add(reviewPost);
+
+                            if (reviewPost.getId().equals(CurrentUserInfo.getInstance().getId())) {
+                                myReviewPost = reviewPost;
+                            }
                         }
 
                         reviewList.sort(new Comparator<ReviewPost>() {
@@ -211,6 +222,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 return o2.getNumberOfThumb() - o1.getNumberOfThumb();
                             }
                         });
+
+                        if (myReviewPost != null) {
+                            // 현재 로그인한 계정으로 작성한 리뷰는 가장 위에 표시
+                            reviewList.remove(myReviewPost);
+                            reviewList.add(0, myReviewPost);
+                        }
 
                         try {
                             for (int i = 0; i < 5; i++) {
@@ -263,7 +280,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                 view.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_top_for_writing_review));
 
-                recyclerView.bringToFront();
+                //recyclerView.bringToFront();
 
                 AsyncTask.execute(new Runnable() {
                     @Override
@@ -322,7 +339,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                         if (!contentInput.getText().equals("")) {
                             ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), reviewScore, contentInput.getText().toString());
 
-                            reviewDataList.add(reviewPost);
+                            reviewDataList.add(0, reviewPost);
                             reviewPost.postFirebaseDatabase(movieData.getTitle());
 
                             movieReviewAdapter.notifyDataSetChanged();
