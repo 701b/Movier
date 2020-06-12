@@ -79,7 +79,18 @@ public class NaverMovieSearch {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         MovieData data = gson.fromJson(jsonArray.get(i).toString(), MovieData.class);
-                        dataList.add(data);
+                        boolean isAlreadyInList = false;
+
+                        for (MovieData dataInList : dataList) {
+                            if (dataInList.getTitle().equals(data.getTitle()) && dataInList.getPubDate().equals(data.getPubDate())) {
+                                isAlreadyInList = true;
+                                break;
+                            }
+                        }
+
+                        if (!isAlreadyInList) {
+                            dataList.add(data);
+                        }
                     }
 
                     onReceiveMovieDataListener.onReceiveMovieData(dataList);

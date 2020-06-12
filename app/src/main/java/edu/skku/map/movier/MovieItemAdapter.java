@@ -21,17 +21,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.ViewHolder> {
 
     private List<MovieData> movieDataList;
     private OnItemClickMovieItemListener onItemClickMovieItemListener;
+    private Map<String, Bitmap> posterImageMap;
 
 
     public MovieItemAdapter(List<MovieData> movieDataList, OnItemClickMovieItemListener onItemClickMovieItemListener) {
         this.movieDataList = movieDataList;
         this.onItemClickMovieItemListener = onItemClickMovieItemListener;
+        posterImageMap = new HashMap<>();
     }
 
 
@@ -49,9 +53,16 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final MovieData movieData = movieDataList.get(position);
-        DownloadImageTask connectionWithNaverTask = new DownloadImageTask(holder, movieData, onItemClickMovieItemListener);
 
-        connectionWithNaverTask.execute();
+        if (!movieData.getTitle().equals("")) {
+            if (!posterImageMap.containsKey(movieData.getTitle())) {
+                DownloadImageTask connectionWithNaverTask = new DownloadImageTask(holder, movieData, posterImageMap, onItemClickMovieItemListener);
+
+                connectionWithNaverTask.execute();
+            } else {
+                holder.posterImage.setImageBitmap(posterImageMap.get(movieData.getTitle()));
+            }
+        }
 
         holder.titleText.setText(movieData.getTitle());
         holder.pubDateText.setText(movieData.getPubDate());
@@ -60,6 +71,10 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
     @Override
     public int getItemCount() {
         return movieDataList.size();
+    }
+
+    public Map<String, Bitmap> getPosterImageMap() {
+        return posterImageMap;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -87,12 +102,14 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
 
         private ViewHolder viewHolder;
         private MovieData movieData;
+        private Map<String, Bitmap> posterImageMap;
         private OnItemClickMovieItemListener onItemClickMovieItemListener;
 
 
-        public DownloadImageTask(ViewHolder viewHolder, MovieData movieData, OnItemClickMovieItemListener onItemClickMovieItemListener) {
+        public DownloadImageTask(ViewHolder viewHolder, MovieData movieData, Map<String, Bitmap> posterImageMap, OnItemClickMovieItemListener onItemClickMovieItemListener) {
             this.viewHolder = viewHolder;
             this.movieData = movieData;
+            this.posterImageMap = posterImageMap;
             this.onItemClickMovieItemListener = onItemClickMovieItemListener;
         }
 
@@ -127,6 +144,7 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
             super.onPostExecute(bitmap);
 
             viewHolder.posterImage.setImageBitmap(bitmap);
+            posterImageMap.put(movieData.getTitle(), bitmap);
 
             viewHolder.movieItem.setOnClickListener(new View.OnClickListener() {
                 @Override

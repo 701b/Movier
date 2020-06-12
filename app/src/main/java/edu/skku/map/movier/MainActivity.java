@@ -94,10 +94,22 @@ public class MainActivity extends AppCompatActivity {
                         new NaverMovieSearch(movieTitleInput.getText().toString(), movieDataList.size() + 1, new OnReceiveMovieDataListener() {
                             @Override
                             public void onReceiveMovieData(List<MovieData> movieDataList) {
+
                                 if (movieDataList.size() < 10) {
                                     isSearchFinished = true;
                                 } else {
                                     isSearchFinished = false;
+                                }
+
+                                for (MovieData data1 : MainActivity.this.movieDataList) {
+                                    for (MovieData data2 : movieDataList) {
+                                        if (data1 != data2) {
+                                            if (data1.getTitle().equals(data2.getTitle()) && data1.getPubDate().equals(data2.getPubDate())) {
+                                                movieDataList.remove(data2);
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
 
                                 MainActivity.this.movieDataList.addAll(movieDataList);
@@ -119,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     movieDataList.clear();
+                    movieItemAdapter.getPosterImageMap().clear();
 
                     new NaverMovieSearch(movieTitleInput.getText().toString(), 1, new OnReceiveMovieDataListener() {
                         @Override
