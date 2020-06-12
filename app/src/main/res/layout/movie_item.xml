@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/movie_item"
     android:layout_width="match_parent"
-    android:layout_height="240dp"
+    android:layout_height="270dp"
     android:orientation="vertical"
     android:layout_margin="20dp"
     android:background="@drawable/movie_item_background">
@@ -10,8 +10,9 @@
     <ImageView
         android:id="@+id/movie_item_poster_image"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
-        android:scaleType="centerCrop"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_no_image"
+        android:scaleType="center"
         android:layout_margin="1dp"/>
 
     <TextView

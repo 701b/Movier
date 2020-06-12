@@ -27,12 +27,14 @@ import java.util.Map;
 
 public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.ViewHolder> {
 
+    private Context context;
     private List<MovieData> movieDataList;
     private OnItemClickMovieItemListener onItemClickMovieItemListener;
     private Map<String, Bitmap> posterImageMap;
 
 
-    public MovieItemAdapter(List<MovieData> movieDataList, OnItemClickMovieItemListener onItemClickMovieItemListener) {
+    public MovieItemAdapter(Context context, List<MovieData> movieDataList, OnItemClickMovieItemListener onItemClickMovieItemListener) {
+        this.context = context;
         this.movieDataList = movieDataList;
         this.onItemClickMovieItemListener = onItemClickMovieItemListener;
         posterImageMap = new HashMap<>();
@@ -54,18 +56,30 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final MovieData movieData = movieDataList.get(position);
 
-        if (!movieData.getTitle().equals("")) {
+        if (!movieData.getImage().equals("")) {
+            holder.posterImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
             if (!posterImageMap.containsKey(movieData.getTitle())) {
-                DownloadImageTask connectionWithNaverTask = new DownloadImageTask(holder, movieData, posterImageMap, onItemClickMovieItemListener);
+                DownloadImageTask connectionWithNaverTask = new DownloadImageTask(holder, movieData, posterImageMap);
 
                 connectionWithNaverTask.execute();
             } else {
                 holder.posterImage.setImageBitmap(posterImageMap.get(movieData.getTitle()));
             }
+        } else {
+            holder.posterImage.setImageDrawable(context.getDrawable(R.drawable.ic_no_image));
+            holder.posterImage.setScaleType(ImageView.ScaleType.CENTER);
         }
 
         holder.titleText.setText(movieData.getTitle());
         holder.pubDateText.setText(movieData.getPubDate());
+
+        holder.movieItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClickMovieItemListener.onItemClickMovieItem(movieData);
+            }
+        });
     }
 
     @Override
@@ -103,14 +117,12 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
         private ViewHolder viewHolder;
         private MovieData movieData;
         private Map<String, Bitmap> posterImageMap;
-        private OnItemClickMovieItemListener onItemClickMovieItemListener;
 
 
-        public DownloadImageTask(ViewHolder viewHolder, MovieData movieData, Map<String, Bitmap> posterImageMap, OnItemClickMovieItemListener onItemClickMovieItemListener) {
+        public DownloadImageTask(ViewHolder viewHolder, MovieData movieData, Map<String, Bitmap> posterImageMap) {
             this.viewHolder = viewHolder;
             this.movieData = movieData;
             this.posterImageMap = posterImageMap;
-            this.onItemClickMovieItemListener = onItemClickMovieItemListener;
         }
 
 
@@ -145,13 +157,6 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
 
             viewHolder.posterImage.setImageBitmap(bitmap);
             posterImageMap.put(movieData.getTitle(), bitmap);
-
-            viewHolder.movieItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickMovieItemListener.onItemClickMovieItem(movieData);
-                }
-            });
         }
     }
 }
