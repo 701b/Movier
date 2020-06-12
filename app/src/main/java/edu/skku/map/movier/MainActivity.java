@@ -3,8 +3,6 @@ package edu.skku.map.movier;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,11 +12,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
-import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
@@ -35,7 +33,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private UserAccountPost userAccountPost;
     private StorageReference storageReference;
 
     private NavigationView navigationView;
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         toggleDrawerButton = findViewById(R.id.main_toggle_drawer_button);
-        navigationView = findViewById(R.id.main_navigation_view);
+        navigationView = findViewById(R.id.navigation_view);
         recyclerView = findViewById(R.id.main_recycler_view);
         movieTitleInput = findViewById(R.id.main_movie_title_input);
 
@@ -173,9 +170,11 @@ public class MainActivity extends AppCompatActivity {
                                 // 데이터베이스에 같은 id가 존재할 때
                                 if (post.getPassword().equals(password)) {
                                     // 비밀번호가 데이터베이스의 비밀번호와 같을 때
-                                    userAccountPost = post;
+                                    CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
 
-                                    customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, userAccountPost, toggleDrawerButton);
+                                    currentUserInfo.setId(post.getId());
+
+                                    customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
 
                                     progressDialog.dismiss();
                                 } else {
@@ -204,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == CustomNavigationViewSetting.PICK_PROFILE_IMAGE) {
             if (resultCode == RESULT_OK) {
-                storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(userAccountPost.getId()).putFile(data.getData());
+                storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(CurrentUserInfo.getInstance().getId()).putFile(data.getData());
                 customNavigationViewSetting.setProfileImage(data.getData());
             }
         }
