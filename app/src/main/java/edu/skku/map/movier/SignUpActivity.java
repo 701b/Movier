@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -35,6 +36,8 @@ public class SignUpActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private ScrollView scrollView;
+    private TextView pleaseIdText;
+    private TextView pleasePasswordText;
     private EditText idInput;
     private EditText passwordInput;
     private Button manButton;
@@ -57,6 +60,8 @@ public class SignUpActivity extends AppCompatActivity {
         TextView greetingText = findViewById(R.id.signup_greeting_text);
 
         scrollView = findViewById(R.id.signup_scroll_view);
+        pleaseIdText = findViewById(R.id.signup_please_id_text);
+        pleasePasswordText = findViewById(R.id.signup_please_password_text);
         idInput = findViewById(R.id.signup_id_input);
         passwordInput = findViewById(R.id.signup_password_input);
         manButton = findViewById(R.id.signup_man_button);
@@ -106,17 +111,21 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        idInput.setOnClickListener(new View.OnClickListener() {
+        idInput.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                scrollView.smoothScrollTo(0, idInput.getTop());
+            public boolean onTouch(View v, MotionEvent event) {
+                scrollView.smoothScrollTo(0, pleaseIdText.getTop());
+
+                return false;
             }
         });
 
-        passwordInput.setOnClickListener(new View.OnClickListener() {
+        passwordInput.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                scrollView.smoothScrollTo(0, passwordInput.getTop());
+            public boolean onTouch(View v, MotionEvent event) {
+                scrollView.smoothScrollTo(0, pleasePasswordText.getTop());
+
+                return false;
             }
         });
 
