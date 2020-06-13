@@ -79,6 +79,8 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
                 holder.scoreStarImage5.setVisibility(View.INVISIBLE);
         }
 
+        holder.profileImage.setImageDrawable(context.getDrawable(R.drawable.ic_person));
+
         if (!profileImageMap.containsKey(reviewPost.getId())) {
             UserAccountPost.addOnDownloadProfileImage(reviewPost.getId(), new OnDownloadProfileImageListener() {
                 @Override

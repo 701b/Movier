@@ -37,7 +37,7 @@
         android:orientation="horizontal"
         android:layout_marginHorizontal="10dp"
         android:gravity="center_vertical"
-        android:paddingTop="2dp">
+        android:paddingTop="4dp">
 
         <ImageView
             android:id="@+id/imageView"
@@ -64,7 +64,7 @@
         android:textColor="#222222"
         android:fontFamily="@font/yoongodic320"
         android:textSize="14sp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginStart="11dp"
         android:paddingTop="2dp"/>
 
 </LinearLayout>
