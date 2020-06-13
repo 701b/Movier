@@ -45,7 +45,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="20dp"
-            android:paddingBottom="50dp">
+            android:paddingBottom="50dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
             <TextView
                 android:id="@+id/signup_greeting_text"
@@ -55,7 +57,7 @@
                 android:fontFamily="@font/yoongodic320"
                 android:text="안녕하세요"
                 android:textColor="#222222"
-                android:textSize="22sp" />
+                android:textSize="22sp"/>
 
             <TextView
                 android:id="@+id/signup_introduction_text1"

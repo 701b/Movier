@@ -60,12 +60,15 @@ public class MovieDetailActivity extends AppCompatActivity {
     private List<ReviewPost> reviewDataList;
 
     private boolean isDeleteMoreReviewLayout = false;
+    private boolean isOpenWritingReviewLayout = false;
 
     private ImageView starImage1;
     private ImageView starImage2;
     private ImageView starImage3;
     private ImageView starImage4;
     private ImageView starImage5;
+
+    private LinearLayout openedWritingReviewLayout;
 
     private int reviewScore = 0;
     private float averageScore = 0.0f;
@@ -384,6 +387,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                                         if (finalLastIndex == reviewList.size() - 1) {
                                             // 더 이상의 리뷰가 없을 때 더보기 버튼 삭제
+                                            if (isOpenWritingReviewLayout) {
+                                                ((RelativeLayout.LayoutParams) openedWritingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                                            }
+
                                             ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
                                             ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
                                             isDeleteMoreReviewLayout = true;
@@ -413,6 +420,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                                         if (finalLastIndex == reviewList.size() - 1) {
                                             // 더 이상의 리뷰가 없을 때 더보기 버튼 삭제
+                                            if (isOpenWritingReviewLayout) {
+                                                ((RelativeLayout.LayoutParams) openedWritingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                                            }
+
                                             ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
                                             ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
                                             isDeleteMoreReviewLayout = true;
@@ -445,26 +456,30 @@ public class MovieDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                 final ViewGroup viewGroup = (ViewGroup) writeReviewLayout.getParent();
-                final View view = inflater.inflate(R.layout.write_review, viewGroup, false);
-                LinearLayout postWritingReviewLayout = view.findViewById(R.id.write_review_write_review_layout);
-                final EditText contentInput = view.findViewById(R.id.write_review_content_input);
 
-                starImage1 = view.findViewById(R.id.write_review_star_image1);
-                starImage2 = view.findViewById(R.id.write_review_star_image2);
-                starImage3 = view.findViewById(R.id.write_review_star_image3);
-                starImage4 = view.findViewById(R.id.write_review_star_image4);
-                starImage5 = view.findViewById(R.id.write_review_star_image5);
+                openedWritingReviewLayout = (LinearLayout) inflater.inflate(R.layout.write_review, viewGroup, false);
+
+                LinearLayout postWritingReviewLayout = openedWritingReviewLayout.findViewById(R.id.write_review_write_review_layout);
+                final EditText contentInput = openedWritingReviewLayout.findViewById(R.id.write_review_content_input);
+
+                isOpenWritingReviewLayout = true;
+
+                starImage1 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image1);
+                starImage2 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image2);
+                starImage3 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image3);
+                starImage4 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image4);
+                starImage5 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image5);
 
                 viewGroup.removeView(writeReviewLayout);
-                viewGroup.addView(view);
+                viewGroup.addView(openedWritingReviewLayout);
 
                 if (isDeleteMoreReviewLayout) {
-                    ((RelativeLayout.LayoutParams) view.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                    ((RelativeLayout.LayoutParams) openedWritingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
                 } else {
-                    ((RelativeLayout.LayoutParams) view.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_more_review_layout);
+                    ((RelativeLayout.LayoutParams) openedWritingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_more_review_layout);
                 }
 
-                view.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_top_for_writing_review));
+                openedWritingReviewLayout.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_top_for_writing_review));
 
                 recyclerView.bringToFront();
                 moreReviewLayout.bringToFront();
@@ -534,7 +549,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                                 movieReviewAdapter.notifyDataSetChanged();
 
-                                viewGroup.removeView(view);
+                                viewGroup.removeView(openedWritingReviewLayout);
 
                                 reviewCount = Integer.parseInt(reviewNumberText.getText().toString()) + 1;
                                 sumOfScore = (reviewCount - 1) * averageScore + reviewPost.getScore();

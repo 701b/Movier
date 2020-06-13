@@ -111,21 +111,21 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        idInput.setOnTouchListener(new View.OnTouchListener() {
+        idInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                scrollView.smoothScrollTo(0, pleaseIdText.getTop());
-
-                return false;
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    scrollView.smoothScrollTo(0, pleaseIdText.getTop() - 100);
+                }
             }
         });
 
-        passwordInput.setOnTouchListener(new View.OnTouchListener() {
+        passwordInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                scrollView.smoothScrollTo(0, pleasePasswordText.getTop());
-
-                return false;
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    scrollView.smoothScrollTo(0, pleasePasswordText.getTop() - 100);
+                }
             }
         });
 
@@ -286,6 +286,8 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private void goToLoginPage() {
         Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
