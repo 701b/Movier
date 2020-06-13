@@ -16,6 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,6 +60,7 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         final MovieData movieData = movieDataList.get(position);
 
         if (!movieData.getImage().equals("")) {
@@ -78,6 +85,30 @@ public class MovieItemAdapter extends RecyclerView.Adapter<MovieItemAdapter.View
             @Override
             public void onClick(View v) {
                 onItemClickMovieItemListener.onItemClickMovieItem(movieData);
+            }
+        });
+
+        databaseReference.child(ReviewPost.REVIEW_TABLE_NAME).child(movieData.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int sumOfScore = 0;
+
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    ReviewPost reviewPost = data.getValue(ReviewPost.class);
+
+                    sumOfScore += reviewPost.getScore();
+                }
+
+                if (dataSnapshot.getChildrenCount() != 0) {
+                    holder.scoreText.setText(String.format("%.1f", ((float) sumOfScore) / dataSnapshot.getChildrenCount()));
+                } else {
+                    holder.scoreText.setText("0.0");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }
