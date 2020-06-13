@@ -29,11 +29,12 @@ public class ReviewPost {
 
     public ReviewPost() {}
 
-    public ReviewPost(String id, boolean isMan, int score, String content) {
+    public ReviewPost(String id, boolean isMan, int score, String content, Bitmap profileImage) {
         this.id = id;
         this.isMan = isMan;
         this.score = score;
         this.content = content;
+        this.profileImage = profileImage;
 
         init();
     }

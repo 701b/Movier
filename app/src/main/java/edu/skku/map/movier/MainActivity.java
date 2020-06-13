@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -262,6 +264,12 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(CurrentUserInfo.getInstance().getId()).putFile(data.getData());
                 customNavigationViewSetting.setProfileImage(data.getData());
+
+                try {
+                    CurrentUserInfo.getInstance().setProfileImage(MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData()));
+                } catch (IOException e) {
+                    Log.e("TEST", "load bitmap from uri ERROR", e);
+                }
             }
         }
     }

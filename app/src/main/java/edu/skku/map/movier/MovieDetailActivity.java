@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -524,13 +525,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (reviewScore != 0) {
                             if (!contentInput.getText().toString().equals("")) {
-                                ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), CurrentUserInfo.getInstance().isMan(), reviewScore, contentInput.getText().toString());
+                                ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), CurrentUserInfo.getInstance().isMan(), reviewScore, contentInput.getText().toString(), CurrentUserInfo.getInstance().getProfileImage());
                                 float sumOfScore;
                                 int reviewCount;
 
                                 reviewDataList.add(0, reviewPost);
                                 reviewPost.postFirebaseDatabase(movieData.getTitle());
-                                reviewPost.setProfileImage(CurrentUserInfo.getInstance().getProfileImage());
 
                                 movieReviewAdapter.notifyDataSetChanged();
 
@@ -773,6 +773,12 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                 storageReference.child(UserAccountPost.PROFILE_IMAGE_ADDRESS).child(CurrentUserInfo.getInstance().getId()).putFile(data.getData());
                 customNavigationViewSetting.setProfileImage(data.getData());
+
+                try {
+                    CurrentUserInfo.getInstance().setProfileImage(MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData()));
+                } catch (IOException e) {
+                    Log.e("TEST", "load bitmap from uri ERROR", e);
+                }
             }
         }
     }

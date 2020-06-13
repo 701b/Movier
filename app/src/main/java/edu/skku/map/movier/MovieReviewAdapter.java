@@ -1,9 +1,7 @@
 package edu.skku.map.movier;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +81,6 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
         } else {
             holder.profileImage.setImageDrawable(context.getDrawable(R.drawable.ic_person));
         }
-
 
         if (reviewPost.getIsPressThumb(currentUserInfo.getId())) {
             holder.thumbImage.setImageDrawable(context.getDrawable(R.drawable.ic_thumb_up_red));
