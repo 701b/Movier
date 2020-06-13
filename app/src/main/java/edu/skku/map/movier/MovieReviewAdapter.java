@@ -49,8 +49,6 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
         final ReviewPost reviewPost = reviewPostList.get(position);
         final CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
 
-        Log.d("TEST", "id : " + reviewPost.getId() + ", score : " + reviewPost.getScore());
-
         holder.idText.setText(reviewPost.getId());
         holder.contentText.setText(reviewPost.getContent());
         holder.numberOfThumbText.setText(String.valueOf(reviewPost.getNumberOfThumb()));

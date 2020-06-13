@@ -63,6 +63,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private ImageView starImage5;
 
     private int reviewScore = 0;
+    private float averageScore = 0.0f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +167,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                 reviewNumberText.setText(String.valueOf(dataSnapshot.getChildrenCount()));
 
                 if (dataSnapshot.getChildrenCount() != 0) {
-                    scoreText.setText(String.format("%.1f", ((float) sumOfScore) / dataSnapshot.getChildrenCount()));
+                    averageScore = ((float) sumOfScore) / dataSnapshot.getChildrenCount();
+                    scoreText.setText(String.format("%.1f", averageScore));
                 } else {
                     scoreText.setText("0.0");
                 }
@@ -199,7 +201,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                     protected void onPostExecute(Void aVoid) {
                         super.onPostExecute(aVoid);
 
-                        mainLoadingImage.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_out));
+                        mainLoadingImage.clearAnimation();
+                        //mainLoadingImage.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_out));
                         contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
                         mainLoadingImage.setVisibility(View.INVISIBLE);
                         contentLayout.setVisibility(View.VISIBLE);
@@ -282,7 +285,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                 final ViewGroup viewGroup = (ViewGroup) writeReviewLayout.getParent();
                 final View view = inflater.inflate(R.layout.write_review, viewGroup, false);
-                LinearLayout writeReviewLayout = view.findViewById(R.id.write_review_write_review_layout);
+                LinearLayout postWritingReviewLayout = view.findViewById(R.id.write_review_write_review_layout);
                 final EditText contentInput = view.findViewById(R.id.write_review_content_input);
 
                 starImage1 = view.findViewById(R.id.write_review_star_image1);
@@ -356,12 +359,14 @@ public class MovieDetailActivity extends AppCompatActivity {
                     }
                 });
 
-                writeReviewLayout.setOnClickListener(new View.OnClickListener() {
+                postWritingReviewLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (reviewScore != 0) {
                             if (!contentInput.getText().toString().equals("")) {
                                 ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), reviewScore, contentInput.getText().toString());
+                                float sumOfScore;
+                                int reviewCount;
 
                                 reviewDataList.add(0, reviewPost);
                                 reviewPost.postFirebaseDatabase(movieData.getTitle());
@@ -370,7 +375,11 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                                 viewGroup.removeView(view);
 
-                                reviewNumberText.setText(String.valueOf(Integer.parseInt(reviewNumberText.getText().toString()) + 1));
+                                reviewCount = Integer.parseInt(reviewNumberText.getText().toString()) + 1;
+                                sumOfScore = (reviewCount - 1) * averageScore + reviewPost.getScore();
+                                reviewNumberText.setText(String.valueOf(reviewCount));
+                                scoreText.setText(String.format("%.1f", sumOfScore / reviewCount));
+
                             } else {
                                 new AlertDialog.Builder(MovieDetailActivity.this)
                                         .setMessage("리뷰 내용을 작성하세요")
