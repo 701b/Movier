@@ -7,7 +7,6 @@
     android:orientation="vertical"
     tools:context=".SignUpActivity">
 
-
     <ImageButton
         android:id="@+id/signup_cancle_button"
         android:layout_width="wrap_content"
@@ -17,7 +16,6 @@
         app:srcCompat="@drawable/ic_close" />
 
     <TextView
-        android:id="@+id/signup_logo_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/gill_sans_mt"
@@ -27,7 +25,6 @@
         android:layout_marginStart="20dp"/>
 
     <TextView
-        android:id="@+id/signup_signup_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/yoongodic320"
@@ -37,6 +34,7 @@
         android:layout_marginStart="20dp"/>
 
     <ScrollView
+        android:id="@+id/signup_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
@@ -47,15 +45,81 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="20dp"
-            android:paddingBottom="50dp">
+            android:paddingBottom="50dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
             <TextView
-                android:id="@+id/signup_id_text"
+                android:id="@+id/signup_greeting_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
                 android:fontFamily="@font/yoongodic320"
-                android:text="아이디가 뭐예요?"
+                android:text="안녕하세요"
+                android:textColor="#222222"
+                android:textSize="22sp"/>
+
+            <TextView
+                android:id="@+id/signup_introduction_text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:fontFamily="@font/yoongodic320"
+                android:text="처음이신가요?"
+                android:textColor="#222222"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/signup_introduction_text2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/yoongodic320"
+                android:text="계정을 만들어주세요"
+                android:textColor="#222222"
+                android:textSize="22sp" />
+
+            <LinearLayout
+                android:id="@+id/signup_login_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/yoongodic320"
+                    android:text="이미 회원이시라면 "
+                    android:textColor="#222222"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/yoongodic320"
+                    android:text="로그인"
+                    android:textColor="#FF0000"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/yoongodic320"
+                    android:text="하세요 >>"
+                    android:textColor="#222222"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/signup_please_id_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="150dp"
+                android:fontFamily="@font/yoongodic320"
+                android:text="아이디를 입력해주세요"
                 android:textColor="#222222"
                 android:textSize="22sp" />
 
@@ -67,7 +131,7 @@
                 android:background="@drawable/white_rounded_background"
                 android:fontFamily="@font/yoongodic320"
                 android:hint="아이디"
-                android:inputType="textPersonName"
+                android:inputType="text"
                 android:paddingStart="15dp"
                 android:textCursorDrawable="@drawable/red_cursor"
                 android:textSize="18sp" />
@@ -83,12 +147,12 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/signup_password_text"
+                android:id="@+id/signup_please_password_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="80dp"
                 android:fontFamily="@font/yoongodic320"
-                android:text="비밀번호는요?"
+                android:text="비밀번호를 입력해주세요"
                 android:textColor="#222222"
                 android:textSize="22sp" />
 
@@ -116,12 +180,11 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/signup_gender_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="80dp"
                 android:fontFamily="@font/yoongodic320"
-                android:text="성별이 궁금해요"
+                android:text="성별을 선택해주세요"
                 android:textColor="#222222"
                 android:textSize="22sp" />
 
@@ -138,7 +201,8 @@
                     android:layout_weight="1"
                     android:background="@drawable/white_rounded_red_bordered_background"
                     android:text="남자"
-                    android:textColor="#FF0000" />
+                    android:textColor="#FF0000"
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/signup_woman_button"
@@ -147,17 +211,19 @@
                     android:layout_weight="1"
                     android:background="@drawable/white_rounded_grey_bordered_background"
                     android:text="여자"
-                    android:textColor="#BBBBBB" />
+                    android:textColor="#BBBBBB"
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <Button
                 android:id="@+id/signup_signup_button"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="70dp"
                 android:background="@drawable/white_rounded_grey_bordered_background"
                 android:text="가입"
-                android:textColor="#BBBBBB" />
+                android:textColor="#BBBBBB"
+                android:textSize="20sp" />
 
 
         </LinearLayout>
