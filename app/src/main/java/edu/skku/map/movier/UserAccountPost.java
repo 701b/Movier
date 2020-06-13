@@ -67,6 +67,10 @@ public class UserAccountPost implements Serializable {
         return password;
     }
 
+    public boolean isMan() {
+        return isMan;
+    }
+
     public static void addOnDownloadProfileImage(String id, final OnDownloadProfileImageListener onDownloadProfileImageListener, final OnFailToDownloadProfileImageListener onFailToDownloadProfileImageListener) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
 

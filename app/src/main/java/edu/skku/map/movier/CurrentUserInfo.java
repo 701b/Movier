@@ -8,6 +8,7 @@ public class CurrentUserInfo {
 
     private String id;
     private Bitmap profileImage;
+    private boolean isMan;
 
 
     private CurrentUserInfo() {}
@@ -27,6 +28,14 @@ public class CurrentUserInfo {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isMan() {
+        return isMan;
+    }
+
+    public void setMan(boolean man) {
+        isMan = man;
     }
 
     public Bitmap getProfileImage() {

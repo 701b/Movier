@@ -19,6 +19,7 @@ public class ReviewPost {
 
     private String idArrayWhoPressThumb = "";
     private String id;
+    private boolean isMan;
     private int score;
     private String content;
 
@@ -28,8 +29,9 @@ public class ReviewPost {
 
     public ReviewPost() {}
 
-    public ReviewPost(String id, int score, String content) {
+    public ReviewPost(String id, boolean isMan, int score, String content) {
         this.id = id;
+        this.isMan = isMan;
         this.score = score;
         this.content = content;
 
@@ -50,6 +52,7 @@ public class ReviewPost {
         HashMap<String, Object> result = new HashMap<>();
 
         result.put("id", id);
+        result.put("isMan", isMan);
         result.put("score", score);
         result.put("content", content);
         result.put("idArrayWhoPressThumb", idArrayWhoPressThumb);
@@ -100,6 +103,10 @@ public class ReviewPost {
 
     public String getId() {
         return id;
+    }
+
+    public boolean isMan() {
+        return isMan;
     }
 
     public int getScore() {

@@ -54,13 +54,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <ProgressBar
                     android:id="@+id/movie_detail_main_loading_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="100dp"
-                    android:src="@drawable/loading_grey_background" />
+                    android:layout_marginTop="100dp"/>
 
                 <LinearLayout
                     android:id="@+id/movie_detail_content_layout"
@@ -265,6 +264,16 @@
 
                     </LinearLayout>
 
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#FFFFFF"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="10dp">
+
+                    </RelativeLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -315,11 +324,10 @@
                             android:paddingVertical="5dp"
                             android:layout_below="@+id/movie_detail_recycler_view">
 
-                            <ImageView
+                            <ProgressBar
                                 android:id="@+id/movie_detail_more_review_loading_image"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
-                                app:srcCompat="@drawable/loading"
                                 android:layout_centerHorizontal="true"
                                 android:visibility="invisible"/>
 

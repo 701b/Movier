@@ -12,6 +12,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -82,9 +86,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         final LinearLayout writeReviewLayout = findViewById(R.id.movie_detail_write_review_layout);
         final TextView reviewNumberText = findViewById(R.id.movie_detail_review_number_text);
         final LinearLayout innerLayout = findViewById(R.id.movie_detail_more_review_inner_layout);
-        final ImageView moreReviewLoadingImage = findViewById(R.id.movie_detail_more_review_loading_image);
+        final ProgressBar moreReviewProgressBar = findViewById(R.id.movie_detail_more_review_loading_image);
         final TextView scoreText = findViewById(R.id.movie_detail_score_text);
-        final ImageView mainLoadingImage = findViewById(R.id.movie_detail_main_loading_image);
+        final ProgressBar mainProgressBar = findViewById(R.id.movie_detail_main_loading_image);
         final LinearLayout contentLayout = findViewById(R.id.movie_detail_content_layout);
         final NestedScrollView scrollView = findViewById(R.id.movie_detail_scroll_view);
 
@@ -99,7 +103,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         scrollView.scrollTo(0, 0);
         contentLayout.setVisibility(View.INVISIBLE);
-        mainLoadingImage.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_loading));
+        mainProgressBar.setIndeterminate(true);
+        moreReviewProgressBar.setIndeterminate(true);
+        mainProgressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.MULTIPLY);
+        moreReviewProgressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.MULTIPLY);
 
         reviewDataList = new ArrayList<>();
         customNavigationViewSetting = new CustomNavigationViewSetting(MovieDetailActivity.this, toggleDrawerButton);
@@ -183,9 +190,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                             if (numberOfLoadedImage == maxSize) {
                                 contentLayout.setVisibility(View.VISIBLE);
                                 movieReviewAdapter.notifyDataSetChanged();
-                                mainLoadingImage.clearAnimation();
                                 contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
-                                mainLoadingImage.setVisibility(View.INVISIBLE);
+                                mainProgressBar.setVisibility(View.INVISIBLE);
                             }
                         }
                     }, new OnFailToDownloadProfileImageListener() {
@@ -204,9 +210,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                             if (numberOfLoadedImage == maxSize) {
                                 contentLayout.setVisibility(View.VISIBLE);
                                 movieReviewAdapter.notifyDataSetChanged();
-                                mainLoadingImage.clearAnimation();
                                 contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
-                                mainLoadingImage.setVisibility(View.INVISIBLE);
+                                mainProgressBar.setVisibility(View.INVISIBLE);
                             }
                         }
                     });
@@ -220,9 +225,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                     // 검색된 리뷰가 없을 때
                     contentLayout.setVisibility(View.VISIBLE);
                     movieReviewAdapter.notifyDataSetChanged();
-                    mainLoadingImage.clearAnimation();
                     contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
-                    mainLoadingImage.setVisibility(View.INVISIBLE);
+                    mainProgressBar.setVisibility(View.INVISIBLE);
                 }
 
                 reviewNumberText.setText(String.valueOf(dataSnapshot.getChildrenCount()));
@@ -255,9 +259,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 innerLayout.setVisibility(View.INVISIBLE);
-                moreReviewLoadingImage.setVisibility(View.VISIBLE);
-
-                moreReviewLoadingImage.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_loading));
+                moreReviewProgressBar.setVisibility(View.VISIBLE);
 
                 databaseReference.child(ReviewPost.REVIEW_TABLE_NAME).child(movieData.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -319,9 +321,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                                     if (numberOfLoadedImage == finalLastIndex - firstIndex + 1) {
                                         movieReviewAdapter.notifyDataSetChanged();
-                                        moreReviewLoadingImage.clearAnimation();
                                         innerLayout.setVisibility(View.VISIBLE);
-                                        moreReviewLoadingImage.setVisibility(View.INVISIBLE);
+                                        moreReviewProgressBar.setVisibility(View.INVISIBLE);
 
                                         AsyncTask.execute(new Runnable() {
                                             @Override
@@ -342,9 +343,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                                     if (numberOfLoadedImage == finalLastIndex - firstIndex + 1) {
                                         movieReviewAdapter.notifyDataSetChanged();
-                                        moreReviewLoadingImage.clearAnimation();
                                         innerLayout.setVisibility(View.VISIBLE);
-                                        moreReviewLoadingImage.setVisibility(View.INVISIBLE);
+                                        moreReviewProgressBar.setVisibility(View.INVISIBLE);
 
                                         AsyncTask.execute(new Runnable() {
                                             @Override
@@ -453,7 +453,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (reviewScore != 0) {
                             if (!contentInput.getText().toString().equals("")) {
-                                ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), reviewScore, contentInput.getText().toString());
+                                ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), CurrentUserInfo.getInstance().isMan(), reviewScore, contentInput.getText().toString());
                                 float sumOfScore;
                                 int reviewCount;
 

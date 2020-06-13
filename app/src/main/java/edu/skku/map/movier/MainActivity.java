@@ -204,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
                                         CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
 
                                         currentUserInfo.setId(post.getId());
+                                        currentUserInfo.setMan(post.isMan());
 
                                         customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
 
