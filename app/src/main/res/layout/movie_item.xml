@@ -12,7 +12,6 @@
         android:id="@+id/movie_item_poster_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@drawable/ic_no_image"
         android:scaleType="center"
         android:layout_margin="1dp"/>
 
