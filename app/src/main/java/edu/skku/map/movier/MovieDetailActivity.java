@@ -400,7 +400,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                                             @Override
                                             public void run() {
                                                 try {
-                                                    Thread.sleep(50);
+                                                    Thread.sleep(200);
                                                 } catch (InterruptedException e) {}
 
                                                 scrollView.smoothScrollTo(0, 999999);
@@ -433,7 +433,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                                             @Override
                                             public void run() {
                                                 try {
-                                                    Thread.sleep(50);
+                                                    Thread.sleep(200);
                                                 } catch (InterruptedException e) {}
 
                                                 scrollView.smoothScrollTo(0, 999999);
