@@ -46,6 +46,7 @@ import java.util.List;
 public class MovieDetailActivity extends AppCompatActivity {
 
     private static final int INITIAL_NUMBER_OF_REVIEW_POST_SHOWN = 3;
+    private static final int NUMBER_OF_MORE_REVIEW_POST = 5;
 
     private CustomNavigationViewSetting customNavigationViewSetting;
 
@@ -64,6 +65,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private int reviewScore = 0;
     private float averageScore = 0.0f;
+
+    private int numberOfLoadedImage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         TextView pubDateText = findViewById(R.id.movie_detail_pub_date_text);
         TextView actorText = findViewById(R.id.movie_detail_actor_text);
 
+        scrollView.scrollTo(0, 0);
+        contentLayout.setVisibility(View.INVISIBLE);
         mainLoadingImage.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_loading));
 
         reviewDataList = new ArrayList<>();
@@ -126,9 +131,11 @@ public class MovieDetailActivity extends AppCompatActivity {
         databaseReference.child(ReviewPost.REVIEW_TABLE_NAME).child(movieData.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<ReviewPost> reviewList = new ArrayList<>();
+                final List<ReviewPost> reviewList = new ArrayList<>();
                 ReviewPost myReviewPost = null;
                 int sumOfScore = 0;
+
+                numberOfLoadedImage = 0;
 
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     ReviewPost reviewPost = data.getValue(ReviewPost.class);
@@ -162,8 +169,67 @@ public class MovieDetailActivity extends AppCompatActivity {
                     UserAccountPost.addOnDownloadProfileImage(reviewPost.getId(), new OnDownloadProfileImageListener() {
                         @Override
                         public void onDownloadProfileImage(Bitmap profileImage) {
+                            int maxSize;
+
+                            if (reviewList.size() > INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
+                                maxSize = INITIAL_NUMBER_OF_REVIEW_POST_SHOWN;
+                            } else {
+                                maxSize = reviewList.size();
+                            }
+
                             reviewPost.setProfileImage(profileImage);
-                            movieReviewAdapter.notifyDataSetChanged();
+                            numberOfLoadedImage++;
+
+                            if (numberOfLoadedImage == maxSize) {
+                                contentLayout.setVisibility(View.VISIBLE);
+                                movieReviewAdapter.notifyDataSetChanged();
+                                mainLoadingImage.clearAnimation();
+                                contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
+                                mainLoadingImage.setVisibility(View.INVISIBLE);
+
+                                AsyncTask.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(1);
+                                        } catch (InterruptedException e) {}
+
+                                        //scrollView.scrollTo(0, 0);
+                                    }
+                                });
+                            }
+                        }
+                    }, new OnFailToDownloadProfileImageListener() {
+                        @Override
+                        public void onFailToDownloadProfileImage(Exception e) {
+                            int maxSize;
+
+                            if (reviewList.size() > INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
+                                maxSize = INITIAL_NUMBER_OF_REVIEW_POST_SHOWN;
+                            } else {
+                                maxSize = reviewList.size();
+                            }
+
+                            numberOfLoadedImage++;
+
+                            if (numberOfLoadedImage == maxSize) {
+                                contentLayout.setVisibility(View.VISIBLE);
+                                movieReviewAdapter.notifyDataSetChanged();
+                                mainLoadingImage.clearAnimation();
+                                contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
+                                mainLoadingImage.setVisibility(View.INVISIBLE);
+
+                                AsyncTask.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(50);
+                                        } catch (InterruptedException e) {}
+
+                                        scrollView.scrollTo(0, 0);
+                                    }
+                                });
+                            }
                         }
                     });
 
@@ -192,31 +258,6 @@ public class MovieDetailActivity extends AppCompatActivity {
                 if (myReviewPost != null) {
                     ((ViewGroup) writeReviewLayout.getParent()).removeView(writeReviewLayout);
                 }
-
-                AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {}
-
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        super.onPostExecute(aVoid);
-
-                        mainLoadingImage.clearAnimation();
-                        //mainLoadingImage.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_out));
-                        contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
-                        mainLoadingImage.setVisibility(View.INVISIBLE);
-                        contentLayout.setVisibility(View.VISIBLE);
-                        scrollView.scrollTo(0, 0);
-                    }
-                };
-
-                asyncTask.execute();
             }
 
             @Override
@@ -236,7 +277,10 @@ public class MovieDetailActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         List<ReviewPost> reviewList = new ArrayList<>();
                         ReviewPost myReviewPost = null;
-                        int firstIndex = reviewDataList.size();
+                        final int firstIndex = reviewDataList.size();
+                        int lastIndex = firstIndex;
+
+                        numberOfLoadedImage = 0;
 
                         for (DataSnapshot data : dataSnapshot.getChildren()) {
                             ReviewPost reviewPost = data.getValue(ReviewPost.class);
@@ -247,6 +291,18 @@ public class MovieDetailActivity extends AppCompatActivity {
                             if (reviewPost.getId().equals(CurrentUserInfo.getInstance().getId())) {
                                 myReviewPost = reviewPost;
                             }
+                        }
+
+                        if (lastIndex + NUMBER_OF_MORE_REVIEW_POST - 1 >= reviewList.size()) {
+                            lastIndex = reviewList.size() - 1;
+
+                            // 더 이상의 리뷰가 없을 때 더보기 버튼 삭제
+                            ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
+                            ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                            isDeleteMoreReviewLayout = true;
+                            movieReviewAdapter.notifyDataSetChanged();
+                        } else {
+                            lastIndex += NUMBER_OF_MORE_REVIEW_POST - 1;
                         }
 
                         reviewList.sort(new Comparator<ReviewPost>() {
@@ -262,50 +318,61 @@ public class MovieDetailActivity extends AppCompatActivity {
                             reviewList.add(0, myReviewPost);
                         }
 
-                        try {
-                            for (int i = 0; i < 5; i++) {
-                                final ReviewPost reviewPostToAdd = reviewList.get(firstIndex + i);
+                        for (int i = firstIndex; i <= lastIndex; i++) {
+                            final ReviewPost reviewPostToAdd = reviewList.get(i);
+                            final int finalLastIndex = lastIndex;
 
-                                reviewDataList.add(reviewPostToAdd);
+                            reviewDataList.add(reviewPostToAdd);
 
-                                UserAccountPost.addOnDownloadProfileImage(reviewPostToAdd.getId(), new OnDownloadProfileImageListener() {
-                                    @Override
-                                    public void onDownloadProfileImage(Bitmap profileImage) {
-                                        reviewPostToAdd.setProfileImage(profileImage);
+                            UserAccountPost.addOnDownloadProfileImage(reviewPostToAdd.getId(), new OnDownloadProfileImageListener() {
+                                @Override
+                                public void onDownloadProfileImage(Bitmap profileImage) {
+                                    reviewPostToAdd.setProfileImage(profileImage);
+                                    numberOfLoadedImage++;
+
+                                    if (numberOfLoadedImage == finalLastIndex - firstIndex + 1) {
                                         movieReviewAdapter.notifyDataSetChanged();
+                                        moreReviewLoadingImage.clearAnimation();
+                                        innerLayout.setVisibility(View.VISIBLE);
+                                        moreReviewLoadingImage.setVisibility(View.INVISIBLE);
+
+                                        AsyncTask.execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    Thread.sleep(50);
+                                                } catch (InterruptedException e) {}
+
+                                                scrollView.smoothScrollTo(0, 999999);
+                                            }
+                                        });
                                     }
-                                });
-                            }
-                        } catch (IndexOutOfBoundsException e) {
-                            // 리뷰를 다 읽으면 더보기 버튼 삭제
-                            ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
-                            ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
-                            isDeleteMoreReviewLayout = true;
-                            movieReviewAdapter.notifyDataSetChanged();
+                                }
+                            }, new OnFailToDownloadProfileImageListener() {
+                                @Override
+                                public void onFailToDownloadProfileImage(Exception e) {
+                                    numberOfLoadedImage++;
+
+                                    if (numberOfLoadedImage == finalLastIndex - firstIndex + 1) {
+                                        movieReviewAdapter.notifyDataSetChanged();
+                                        moreReviewLoadingImage.clearAnimation();
+                                        innerLayout.setVisibility(View.VISIBLE);
+                                        moreReviewLoadingImage.setVisibility(View.INVISIBLE);
+
+                                        AsyncTask.execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    Thread.sleep(1);
+                                                } catch (InterruptedException e) {}
+
+                                                scrollView.smoothScrollTo(0, 999999);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
                         }
-
-                        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
-                            @Override
-                            protected Void doInBackground(Void... voids) {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {}
-
-                                return null;
-                            }
-
-                            @Override
-                            protected void onPostExecute(Void aVoid) {
-                                super.onPostExecute(aVoid);
-
-                                moreReviewLoadingImage.clearAnimation();
-                                innerLayout.setVisibility(View.VISIBLE);
-                                moreReviewLoadingImage.setVisibility(View.INVISIBLE);
-                                scrollView.smoothScrollTo(0, 999999);
-                            }
-                        };
-
-                        asyncTask.execute();
                     }
 
                     @Override

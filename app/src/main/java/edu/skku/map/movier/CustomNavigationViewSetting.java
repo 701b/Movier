@@ -89,6 +89,11 @@ public class CustomNavigationViewSetting {
                 public void onDownloadProfileImage(Bitmap profileImage) {
                     drawerProfileImage.setImageBitmap(profileImage);
                 }
+            }, new OnFailToDownloadProfileImageListener() {
+                @Override
+                public void onFailToDownloadProfileImage(Exception e) {
+
+                }
             });
         } else {
             drawerProfileImage.setImageBitmap(CurrentUserInfo.getInstance().getProfileImage());

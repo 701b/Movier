@@ -4,6 +4,9 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -64,7 +67,7 @@ public class UserAccountPost implements Serializable {
         return password;
     }
 
-    public static void addOnDownloadProfileImage(String id, final OnDownloadProfileImageListener onDownloadProfileImageListener) {
+    public static void addOnDownloadProfileImage(String id, final OnDownloadProfileImageListener onDownloadProfileImageListener, final OnFailToDownloadProfileImageListener onFailToDownloadProfileImageListener) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
 
         storageReference.child(PROFILE_IMAGE_ADDRESS).child(id).getBytes(4 * 1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -73,6 +76,11 @@ public class UserAccountPost implements Serializable {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                 onDownloadProfileImageListener.onDownloadProfileImage(bitmap);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                onFailToDownloadProfileImageListener.onFailToDownloadProfileImage(e);
             }
         });
     }
