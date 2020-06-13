@@ -22,14 +22,11 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
 
     private Context context;
     private List<ReviewPost> reviewPostList;
-    private Map<String, Bitmap> profileImageMap;
 
 
     public MovieReviewAdapter(Context context, List<ReviewPost> reviewPostList) {
         this.context = context;
         this.reviewPostList = reviewPostList;
-
-        profileImageMap = new HashMap<>();
     }
 
 
@@ -43,6 +40,8 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
 
         return viewHolder;
     }
+
+
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
@@ -79,19 +78,12 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
                 holder.scoreStarImage5.setVisibility(View.INVISIBLE);
         }
 
-        holder.profileImage.setImageDrawable(context.getDrawable(R.drawable.ic_person));
-
-        if (!profileImageMap.containsKey(reviewPost.getId())) {
-            UserAccountPost.addOnDownloadProfileImage(reviewPost.getId(), new OnDownloadProfileImageListener() {
-                @Override
-                public void onDownloadProfileImage(Bitmap profileImage) {
-                    holder.profileImage.setImageBitmap(profileImage);
-                    profileImageMap.put(reviewPost.getId(), profileImage);
-                }
-            });
+        if (reviewPost.getProfileImage() != null) {
+            holder.profileImage.setImageBitmap(reviewPost.getProfileImage());
         } else {
-            holder.profileImage.setImageBitmap(profileImageMap.get(reviewPost.getId()));
+            holder.profileImage.setImageDrawable(context.getDrawable(R.drawable.ic_person));
         }
+
 
         if (reviewPost.getIsPressThumb(currentUserInfo.getId())) {
             holder.thumbImage.setImageDrawable(context.getDrawable(R.drawable.ic_thumb_up_red));

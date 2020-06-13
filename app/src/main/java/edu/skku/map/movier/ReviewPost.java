@@ -1,5 +1,6 @@
 package edu.skku.map.movier;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +23,7 @@ public class ReviewPost {
     private String content;
 
     private List<String> idListWhoPressThumb;
+    private Bitmap profileImage;
 
 
     public ReviewPost() {}
@@ -110,5 +112,13 @@ public class ReviewPost {
 
     public String getIdArrayWhoPressThumb() {
         return idArrayWhoPressThumb;
+    }
+
+    public Bitmap getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Bitmap profileImage) {
+        this.profileImage = profileImage;
     }
 }
