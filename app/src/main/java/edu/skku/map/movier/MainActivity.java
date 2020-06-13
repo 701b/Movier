@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -159,6 +160,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void searchMovie() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        inputMethodManager.hideSoftInputFromWindow(movieTitleInput.getWindowToken(), 0);
+
         movieDataList.clear();
         movieItemAdapter.getPosterImageMap().clear();
 
