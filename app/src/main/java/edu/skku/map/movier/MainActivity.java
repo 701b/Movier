@@ -14,7 +14,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -204,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                                         CurrentUserInfo currentUserInfo = CurrentUserInfo.getInstance();
 
                                         currentUserInfo.setId(post.getId());
-                                        currentUserInfo.setMan(post.isMan());
+                                        currentUserInfo.setMan(post.getIsMan());
 
                                         customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
 

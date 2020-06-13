@@ -43,7 +43,7 @@ public class UserAccountPost implements Serializable {
 
         result.put("id", id);
         result.put("password", password);
-        result.put("is_man", isMan);
+        result.put("isMan", isMan);
 
         return result;
     }
@@ -67,7 +67,7 @@ public class UserAccountPost implements Serializable {
         return password;
     }
 
-    public boolean isMan() {
+    public boolean getIsMan() {
         return isMan;
     }
 

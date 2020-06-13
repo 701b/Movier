@@ -105,7 +105,7 @@ public class ReviewPost {
         return id;
     }
 
-    public boolean isMan() {
+    public boolean getIsMan() {
         return isMan;
     }
 

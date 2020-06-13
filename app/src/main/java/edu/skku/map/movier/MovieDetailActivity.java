@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -69,6 +68,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private int reviewScore = 0;
     private float averageScore = 0.0f;
+    private int[] numberOfManScore = new int[5];
+    private int[] numberOfWomanScore = new int[5];
 
     private int numberOfLoadedImage = 0;
 
@@ -103,7 +104,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         scrollView.scrollTo(0, 0);
         contentLayout.setVisibility(View.INVISIBLE);
-        mainProgressBar.setIndeterminate(true);
+
+        // progressbar 색상 변경
+       mainProgressBar.setIndeterminate(true);
         moreReviewProgressBar.setIndeterminate(true);
         mainProgressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.MULTIPLY);
         moreReviewProgressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.MULTIPLY);
@@ -155,7 +158,55 @@ public class MovieDetailActivity extends AppCompatActivity {
                     }
 
                     sumOfScore += reviewPost.getScore();
+
+                    if (reviewPost.getIsMan()) {
+                        switch (reviewPost.getScore()) {
+                            case 1:
+                                numberOfManScore[0]++;
+                                break;
+
+                            case 2:
+                                numberOfManScore[1]++;
+                                break;
+
+                            case 3:
+                                numberOfManScore[2]++;
+                                break;
+
+                            case 4:
+                                numberOfManScore[3]++;
+                                break;
+
+                            case 5:
+                                numberOfManScore[4]++;
+                                break;
+                        }
+                    } else {
+                        switch (reviewPost.getScore()) {
+                            case 1:
+                                numberOfWomanScore[0]++;
+                                break;
+
+                            case 2:
+                                numberOfWomanScore[1]++;
+                                break;
+
+                            case 3:
+                                numberOfWomanScore[2]++;
+                                break;
+
+                            case 4:
+                                numberOfWomanScore[3]++;
+                                break;
+
+                            case 5:
+                                numberOfWomanScore[4]++;
+                                break;
+                        }
+                    }
                 }
+
+                renewScoreGraph();
 
                 reviewList.sort(new Comparator<ReviewPost>() {
                     @Override
@@ -469,6 +520,53 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 reviewNumberText.setText(String.valueOf(reviewCount));
                                 scoreText.setText(String.format("%.1f", sumOfScore / reviewCount));
 
+                                if (reviewPost.getIsMan()) {
+                                    switch (reviewPost.getScore()) {
+                                        case 1:
+                                            numberOfManScore[0]++;
+                                            break;
+
+                                        case 2:
+                                            numberOfManScore[1]++;
+                                            break;
+
+                                        case 3:
+                                            numberOfManScore[2]++;
+                                            break;
+
+                                        case 4:
+                                            numberOfManScore[3]++;
+                                            break;
+
+                                        case 5:
+                                            numberOfManScore[4]++;
+                                            break;
+                                    }
+                                } else {
+                                    switch (reviewPost.getScore()) {
+                                        case 1:
+                                            numberOfWomanScore[0]++;
+                                            break;
+
+                                        case 2:
+                                            numberOfWomanScore[1]++;
+                                            break;
+
+                                        case 3:
+                                            numberOfWomanScore[2]++;
+                                            break;
+
+                                        case 4:
+                                            numberOfWomanScore[3]++;
+                                            break;
+
+                                        case 5:
+                                            numberOfWomanScore[4]++;
+                                            break;
+                                    }
+                                }
+
+                                renewScoreGraph();
                             } else {
                                 new AlertDialog.Builder(MovieDetailActivity.this)
                                         .setMessage("리뷰 내용을 작성하세요")
@@ -507,6 +605,67 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         for (ReviewPost reviewPost : reviewDataList) {
             reviewPost.postFirebaseDatabase(movieData.getTitle());
+        }
+    }
+
+    private void renewScoreGraph() {
+        final LinearLayout[] manScoreGraphLayout = new LinearLayout[5];
+        final LinearLayout[] womanScoreGraphLayout = new LinearLayout[5];
+
+        manScoreGraphLayout[0] = findViewById(R.id.movie_detail_man_score_graph1);
+        manScoreGraphLayout[1] = findViewById(R.id.movie_detail_man_score_graph2);
+        manScoreGraphLayout[2] = findViewById(R.id.movie_detail_man_score_graph3);
+        manScoreGraphLayout[3] = findViewById(R.id.movie_detail_man_score_graph4);
+        manScoreGraphLayout[4] = findViewById(R.id.movie_detail_man_score_graph5);
+        womanScoreGraphLayout[0] = findViewById(R.id.movie_detail_woman_score_graph1);
+        womanScoreGraphLayout[1] = findViewById(R.id.movie_detail_woman_score_graph2);
+        womanScoreGraphLayout[2] = findViewById(R.id.movie_detail_woman_score_graph3);
+        womanScoreGraphLayout[3] = findViewById(R.id.movie_detail_woman_score_graph4);
+        womanScoreGraphLayout[4] = findViewById(R.id.movie_detail_woman_score_graph5);
+
+        final float maxHeight = getResources().getDisplayMetrics().density * 100;
+        int maxNumber = 0;
+
+        for (int number : numberOfManScore) {
+            if (number > maxNumber) {
+                maxNumber = number;
+            }
+        }
+
+        for (int number : numberOfWomanScore) {
+            if (number > maxNumber) {
+                maxNumber = number;
+            }
+        }
+
+        if (maxNumber != 0) {
+            for (int i = 0; i < 5; i++) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) manScoreGraphLayout[i].getLayoutParams();
+
+                layoutParams.height = (int) maxHeight * numberOfManScore[i] / maxNumber;
+                manScoreGraphLayout[i].setLayoutParams(layoutParams);
+            }
+
+            for (int i = 0; i < 5; i++) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) womanScoreGraphLayout[i].getLayoutParams();
+
+                layoutParams.height = (int) maxHeight * numberOfWomanScore[i] / maxNumber;
+                womanScoreGraphLayout[i].setLayoutParams(layoutParams);
+            }
+        } else {
+            for (int i = 0; i < 5; i++) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) manScoreGraphLayout[i].getLayoutParams();
+
+                layoutParams.height = 0;
+                manScoreGraphLayout[i].setLayoutParams(layoutParams);
+            }
+
+            for (int i = 0; i < 5; i++) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) womanScoreGraphLayout[i].getLayoutParams();
+
+                layoutParams.height = 0;
+                womanScoreGraphLayout[i].setLayoutParams(layoutParams);
+            }
         }
     }
 
