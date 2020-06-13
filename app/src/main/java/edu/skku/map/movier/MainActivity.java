@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -205,9 +206,20 @@ public class MainActivity extends AppCompatActivity {
                                         currentUserInfo.setId(post.getId());
                                         currentUserInfo.setMan(post.getIsMan());
 
-                                        customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
+                                        UserAccountPost.addOnDownloadProfileImage(CurrentUserInfo.getInstance().getId(), new OnDownloadProfileImageListener() {
+                                            @Override
+                                            public void onDownloadProfileImage(Bitmap profileImage) {
+                                                CurrentUserInfo.getInstance().setProfileImage(profileImage);
+                                                customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
+                                                progressDialog.dismiss();
+                                            }
+                                        }, new OnFailToDownloadProfileImageListener() {
+                                            @Override
+                                            public void onFailToDownloadProfileImage(Exception e) {
 
-                                        progressDialog.dismiss();
+                                            }
+                                        });
+
                                     } else {
                                         // 비밀번호가 데이터베이스의 비밀번호와 다를 때
                                         goToSignUpPage();

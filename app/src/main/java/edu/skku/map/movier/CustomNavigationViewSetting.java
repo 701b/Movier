@@ -83,19 +83,7 @@ public class CustomNavigationViewSetting {
             }
         });
 
-        if (CurrentUserInfo.getInstance().getProfileImage() == null) {
-            UserAccountPost.addOnDownloadProfileImage(CurrentUserInfo.getInstance().getId(), new OnDownloadProfileImageListener() {
-                @Override
-                public void onDownloadProfileImage(Bitmap profileImage) {
-                    drawerProfileImage.setImageBitmap(profileImage);
-                }
-            }, new OnFailToDownloadProfileImageListener() {
-                @Override
-                public void onFailToDownloadProfileImage(Exception e) {
-
-                }
-            });
-        } else {
+        if (CurrentUserInfo.getInstance().getProfileImage() != null) {
             drawerProfileImage.setImageBitmap(CurrentUserInfo.getInstance().getProfileImage());
         }
 
