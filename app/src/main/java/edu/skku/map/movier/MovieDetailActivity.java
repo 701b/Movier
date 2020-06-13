@@ -271,6 +271,17 @@ public class MovieDetailActivity extends AppCompatActivity {
                         moreReviewLoadingImage.clearAnimation();
                         innerLayout.setVisibility(View.VISIBLE);
                         moreReviewLoadingImage.setVisibility(View.INVISIBLE);
+
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(40);
+                                } catch (InterruptedException e) {}
+
+                                scrollView.smoothScrollTo(0, 999999);
+                            }
+                        });
                     }
 
                     @Override
