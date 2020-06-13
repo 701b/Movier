@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ImageView searchMovieImage = findViewById(R.id.main_search_image);
+
         toggleDrawerButton = findViewById(R.id.main_toggle_drawer_button);
         navigationView = findViewById(R.id.navigation_view);
         recyclerView = findViewById(R.id.main_recycler_view);
@@ -66,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
 
         autoLogin();
         initRecyclerView();
+
+        searchMovieImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchMovie();
+            }
+        });
     }
 
     private void initRecyclerView() {
@@ -130,31 +140,35 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    movieDataList.clear();
-                    movieItemAdapter.getPosterImageMap().clear();
-
-                    new NaverMovieSearch(movieTitleInput.getText().toString(), 1, new OnReceiveMovieDataListener() {
-                        @Override
-                        public void onReceiveMovieData(List<MovieData> movieDataList) {
-                            if (movieDataList.size() < 10) {
-                                isSearchFinished = true;
-                            } else {
-                                isSearchFinished = false;
-                            }
-
-                            MainActivity.this.movieDataList.clear();
-                            MainActivity.this.movieDataList.addAll(movieDataList);
-                            MainActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    movieItemAdapter.notifyDataSetChanged();
-                                }
-                            });
-                        }
-                    });
+                    searchMovie();
                 }
 
                 return true;
+            }
+        });
+    }
+
+    private void searchMovie() {
+        movieDataList.clear();
+        movieItemAdapter.getPosterImageMap().clear();
+
+        new NaverMovieSearch(movieTitleInput.getText().toString(), 1, new OnReceiveMovieDataListener() {
+            @Override
+            public void onReceiveMovieData(List<MovieData> movieDataList) {
+                if (movieDataList.size() < 10) {
+                    isSearchFinished = true;
+                } else {
+                    isSearchFinished = false;
+                }
+
+                MainActivity.this.movieDataList.clear();
+                MainActivity.this.movieDataList.addAll(movieDataList);
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        movieItemAdapter.notifyDataSetChanged();
+                    }
+                });
             }
         });
     }

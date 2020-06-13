@@ -47,11 +47,12 @@
             android:background="@drawable/grey_border_white_background"
             android:gravity="center_vertical">
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/main_search_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_search"
+                android:background="#FFFFFF"
                 android:layout_marginStart="10dp"/>
 
             <EditText
