@@ -102,11 +102,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         TextView pubDateText = findViewById(R.id.movie_detail_pub_date_text);
         TextView actorText = findViewById(R.id.movie_detail_actor_text);
 
-        scrollView.scrollTo(0, 0);
         contentLayout.setVisibility(View.INVISIBLE);
 
         // progressbar 색상 변경
-       mainProgressBar.setIndeterminate(true);
+        mainProgressBar.setIndeterminate(true);
         moreReviewProgressBar.setIndeterminate(true);
         mainProgressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.MULTIPLY);
         moreReviewProgressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.MULTIPLY);
@@ -243,6 +242,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 movieReviewAdapter.notifyDataSetChanged();
                                 contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
                                 mainProgressBar.setVisibility(View.INVISIBLE);
+                                scrollView.scrollTo(0, 0);
                             }
                         }
                     }, new OnFailToDownloadProfileImageListener() {
@@ -263,6 +263,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 movieReviewAdapter.notifyDataSetChanged();
                                 contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
                                 mainProgressBar.setVisibility(View.INVISIBLE);
+                                scrollView.scrollTo(0, 0);
                             }
                         }
                     });
@@ -278,6 +279,16 @@ public class MovieDetailActivity extends AppCompatActivity {
                     movieReviewAdapter.notifyDataSetChanged();
                     contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
                     mainProgressBar.setVisibility(View.INVISIBLE);
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(1);
+                            } catch (InterruptedException e) {}
+
+                            scrollView.scrollTo(0, 0);
+                        }
+                    });
                 }
 
                 reviewNumberText.setText(String.valueOf(dataSnapshot.getChildrenCount()));
@@ -315,7 +326,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 databaseReference.child(ReviewPost.REVIEW_TABLE_NAME).child(movieData.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<ReviewPost> reviewList = new ArrayList<>();
+                        final List<ReviewPost> reviewList = new ArrayList<>();
                         ReviewPost myReviewPost = null;
                         final int firstIndex = reviewDataList.size();
                         int lastIndex = firstIndex;
@@ -335,12 +346,6 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                         if (lastIndex + NUMBER_OF_MORE_REVIEW_POST - 1 >= reviewList.size()) {
                             lastIndex = reviewList.size() - 1;
-
-                            // 더 이상의 리뷰가 없을 때 더보기 버튼 삭제
-                            ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
-                            ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
-                            isDeleteMoreReviewLayout = true;
-                            movieReviewAdapter.notifyDataSetChanged();
                         } else {
                             lastIndex += NUMBER_OF_MORE_REVIEW_POST - 1;
                         }
@@ -375,6 +380,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                                         innerLayout.setVisibility(View.VISIBLE);
                                         moreReviewProgressBar.setVisibility(View.INVISIBLE);
 
+                                        if (finalLastIndex == reviewList.size() - 1) {
+                                            // 더 이상의 리뷰가 없을 때 더보기 버튼 삭제
+                                            ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
+                                            ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                                            isDeleteMoreReviewLayout = true;
+                                        }
+
                                         AsyncTask.execute(new Runnable() {
                                             @Override
                                             public void run() {
@@ -397,11 +409,18 @@ public class MovieDetailActivity extends AppCompatActivity {
                                         innerLayout.setVisibility(View.VISIBLE);
                                         moreReviewProgressBar.setVisibility(View.INVISIBLE);
 
+                                        if (finalLastIndex == reviewList.size() - 1) {
+                                            // 더 이상의 리뷰가 없을 때 더보기 버튼 삭제
+                                            ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
+                                            ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                                            isDeleteMoreReviewLayout = true;
+                                        }
+
                                         AsyncTask.execute(new Runnable() {
                                             @Override
                                             public void run() {
                                                 try {
-                                                    Thread.sleep(1);
+                                                    Thread.sleep(50);
                                                 } catch (InterruptedException e) {}
 
                                                 scrollView.smoothScrollTo(0, 999999);
