@@ -317,13 +317,17 @@ public class MainActivity extends AppCompatActivity {
                                             public void onDownloadProfileImage(Bitmap profileImage) {
                                                 CurrentUserInfo.getInstance().setProfileImage(profileImage);
                                                 customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
-                                                progressDialog.dismiss();
+                                                try {
+                                                    progressDialog.dismiss();
+                                                } catch (IllegalArgumentException e1) {}
                                             }
                                         }, new OnFailToDownloadProfileImageListener() {
                                             @Override
                                             public void onFailToDownloadProfileImage(Exception e) {
                                                 customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
-                                                progressDialog.dismiss();
+                                                try {
+                                                    progressDialog.dismiss();
+                                                } catch (IllegalArgumentException e2) {}
                                             }
                                         });
 

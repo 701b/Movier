@@ -41,6 +41,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -69,6 +70,13 @@ public class MovieDetailActivity extends AppCompatActivity {
     private ImageView starImage5;
 
     private LinearLayout openedWritingReviewLayout;
+    private LinearLayout writingReviewLayout;
+    private LinearLayout reviewTitleLayout;
+    private RecyclerView recyclerView;
+    private RelativeLayout moreReviewLayout;
+    private NestedScrollView scrollView;
+    private TextView reviewNumberText;
+    private TextView scoreText;
 
     private int reviewScore = 0;
     private float averageScore = 0.0f;
@@ -78,7 +86,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private int numberOfLoadedImage = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
@@ -86,17 +94,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         movieData = (MovieData) receivedIntent.getSerializableExtra("movie_data");
 
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        final RecyclerView recyclerView = findViewById(R.id.movie_detail_recycler_view);
-        final RelativeLayout moreReviewLayout = findViewById(R.id.movie_detail_more_review_layout);
-        final LinearLayout writeReviewLayout = findViewById(R.id.movie_detail_write_review_layout);
-        final TextView reviewNumberText = findViewById(R.id.movie_detail_review_number_text);
         final LinearLayout innerLayout = findViewById(R.id.movie_detail_more_review_inner_layout);
         final ProgressBar moreReviewProgressBar = findViewById(R.id.movie_detail_more_review_loading_image);
-        final TextView scoreText = findViewById(R.id.movie_detail_score_text);
         final ProgressBar mainProgressBar = findViewById(R.id.movie_detail_main_loading_image);
         final LinearLayout contentLayout = findViewById(R.id.movie_detail_content_layout);
-        final NestedScrollView scrollView = findViewById(R.id.movie_detail_scroll_view);
-        final LinearLayout reviewTitleLayout = findViewById(R.id.movie_detail_review_title_layout);
 
         ImageButton backButton = findViewById(R.id.movie_detail_back_button);
         ImageButton toggleDrawerButton = findViewById(R.id.movie_detail_toggle_drawer_button);
@@ -109,13 +110,20 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         contentLayout.setVisibility(View.INVISIBLE);
 
+        writingReviewLayout = findViewById(R.id.movie_detail_write_review_layout);
+        recyclerView = findViewById(R.id.movie_detail_recycler_view);
+        reviewTitleLayout = findViewById(R.id.movie_detail_review_title_layout);
+        moreReviewLayout = findViewById(R.id.movie_detail_more_review_layout);
+        scrollView = findViewById(R.id.movie_detail_scroll_view);
+        reviewNumberText = findViewById(R.id.movie_detail_review_number_text);
+        scoreText = findViewById(R.id.movie_detail_score_text);
+
         // progressbar 색상 변경
         mainProgressBar.setIndeterminate(true);
         moreReviewProgressBar.setIndeterminate(true);
         mainProgressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.MULTIPLY);
         moreReviewProgressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#FF0000"), PorterDuff.Mode.MULTIPLY);
 
-        reviewDataList = new ArrayList<>();
         customNavigationViewSetting = new CustomNavigationViewSetting(MovieDetailActivity.this, toggleDrawerButton);
 
         titleText.setText(movieData.getTitle());
@@ -126,7 +134,14 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         new DownloadImageTask(movieData, posterImage).execute();
 
-        reviewDataList = new ArrayList<>();
+        if (savedInstanceState != null) {
+            reviewDataList = (List<ReviewPost>) savedInstanceState.getSerializable("reviewDataList");
+            isOpenWritingReviewLayout = savedInstanceState.getBoolean("isOpenWritingReviewLayout");
+            reviewScore = savedInstanceState.getInt("reviewScore");
+        } else {
+            reviewDataList = new ArrayList<>();
+        }
+
         movieReviewAdapter = new MovieReviewAdapter(this, reviewDataList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this) {
@@ -225,96 +240,110 @@ public class MovieDetailActivity extends AppCompatActivity {
                     reviewList.add(0, myReviewPost);
                 }
 
-                for (final ReviewPost reviewPost : reviewList) {
-                    reviewDataList.add(reviewPost);
+                if (savedInstanceState == null) {
 
-                    UserAccountPost.addOnDownloadProfileImage(reviewPost.getId(), new OnDownloadProfileImageListener() {
-                        @Override
-                        public void onDownloadProfileImage(Bitmap profileImage) {
-                            int maxSize;
+                    for (final ReviewPost reviewPost : reviewList) {
+                        reviewDataList.add(reviewPost);
 
-                            if (reviewList.size() > INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
-                                maxSize = INITIAL_NUMBER_OF_REVIEW_POST_SHOWN;
-                            } else {
-                                maxSize = reviewList.size();
+                        UserAccountPost.addOnDownloadProfileImage(reviewPost.getId(), new OnDownloadProfileImageListener() {
+                            @Override
+                            public void onDownloadProfileImage(Bitmap profileImage) {
+                                int maxSize;
+
+                                if (reviewList.size() > INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
+                                    maxSize = INITIAL_NUMBER_OF_REVIEW_POST_SHOWN;
+                                } else {
+                                    maxSize = reviewList.size();
+                                }
+
+                                reviewPost.setProfileImage(profileImage);
+                                numberOfLoadedImage++;
+
+                                if (numberOfLoadedImage == maxSize) {
+                                    contentLayout.setVisibility(View.VISIBLE);
+                                    movieReviewAdapter.notifyDataSetChanged();
+                                    contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
+                                    mainProgressBar.setVisibility(View.INVISIBLE);
+                                    scrollView.scrollTo(0, 0);
+                                }
                             }
+                        }, new OnFailToDownloadProfileImageListener() {
+                            @Override
+                            public void onFailToDownloadProfileImage(Exception e) {
+                                int maxSize;
 
-                            reviewPost.setProfileImage(profileImage);
-                            numberOfLoadedImage++;
+                                if (reviewList.size() > INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
+                                    maxSize = INITIAL_NUMBER_OF_REVIEW_POST_SHOWN;
+                                } else {
+                                    maxSize = reviewList.size();
+                                }
 
-                            if (numberOfLoadedImage == maxSize) {
-                                contentLayout.setVisibility(View.VISIBLE);
-                                movieReviewAdapter.notifyDataSetChanged();
-                                contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
-                                mainProgressBar.setVisibility(View.INVISIBLE);
-                                scrollView.scrollTo(0, 0);
+                                numberOfLoadedImage++;
+
+                                if (numberOfLoadedImage == maxSize) {
+                                    contentLayout.setVisibility(View.VISIBLE);
+                                    movieReviewAdapter.notifyDataSetChanged();
+                                    contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
+                                    mainProgressBar.setVisibility(View.INVISIBLE);
+                                    scrollView.scrollTo(0, 0);
+                                }
                             }
+                        });
+
+                        if (reviewDataList.size() == INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
+                            break;
                         }
-                    }, new OnFailToDownloadProfileImageListener() {
-                        @Override
-                        public void onFailToDownloadProfileImage(Exception e) {
-                            int maxSize;
-
-                            if (reviewList.size() > INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
-                                maxSize = INITIAL_NUMBER_OF_REVIEW_POST_SHOWN;
-                            } else {
-                                maxSize = reviewList.size();
-                            }
-
-                            numberOfLoadedImage++;
-
-                            if (numberOfLoadedImage == maxSize) {
-                                contentLayout.setVisibility(View.VISIBLE);
-                                movieReviewAdapter.notifyDataSetChanged();
-                                contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
-                                mainProgressBar.setVisibility(View.INVISIBLE);
-                                scrollView.scrollTo(0, 0);
-                            }
-                        }
-                    });
-
-                    if (reviewDataList.size() == INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
-                        break;
                     }
-                }
 
-                if (reviewList.size() == 0) {
-                    // 검색된 리뷰가 없을 때
+                    if (reviewList.size() == 0) {
+                        // 검색된 리뷰가 없을 때
+                        contentLayout.setVisibility(View.VISIBLE);
+                        movieReviewAdapter.notifyDataSetChanged();
+                        contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
+                        mainProgressBar.setVisibility(View.INVISIBLE);
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(1);
+                                } catch (InterruptedException e) {
+                                }
+
+                                scrollView.scrollTo(0, 0);
+                            }
+                        });
+                    }
+
+                    reviewNumberText.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+
+                    if (dataSnapshot.getChildrenCount() != 0) {
+                        averageScore = ((float) sumOfScore) / dataSnapshot.getChildrenCount();
+                        scoreText.setText(String.format("%.1f", averageScore));
+                    } else {
+                        scoreText.setText("0.0");
+                    }
+
+                    // 리뷰 수가 INITIAL_NUMBER_OF_REVIEW_POST_SHOWN보다 작거나 같으면 더보기 버튼 삭제
+                    if (dataSnapshot.getChildrenCount() <= INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
+                        ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
+                        ((RelativeLayout.LayoutParams) writingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                        isDeleteMoreReviewLayout = true;
+                    }
+                } else {
+                    if (dataSnapshot.getChildrenCount() == reviewDataList.size()) {
+                        ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
+                        ((RelativeLayout.LayoutParams) writingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                        isDeleteMoreReviewLayout = true;
+                    }
+
                     contentLayout.setVisibility(View.VISIBLE);
                     movieReviewAdapter.notifyDataSetChanged();
-                    contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
                     mainProgressBar.setVisibility(View.INVISIBLE);
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(1);
-                            } catch (InterruptedException e) {}
-
-                            scrollView.scrollTo(0, 0);
-                        }
-                    });
-                }
-
-                reviewNumberText.setText(String.valueOf(dataSnapshot.getChildrenCount()));
-
-                if (dataSnapshot.getChildrenCount() != 0) {
-                    averageScore = ((float) sumOfScore) / dataSnapshot.getChildrenCount();
-                    scoreText.setText(String.format("%.1f", averageScore));
-                } else {
-                    scoreText.setText("0.0");
-                }
-
-                // 리뷰 수가 INITIAL_NUMBER_OF_REVIEW_POST_SHOWN보다 작거나 같으면 더보기 버튼 삭제
-                if (dataSnapshot.getChildrenCount() <= INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
-                    ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
-                    ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
-                    isDeleteMoreReviewLayout = true;
                 }
 
                 // 현재 로그인한 유저가 이미 리뷰를 작성했다면 리뷰 작성 버튼 삭제
                 if (myReviewPost != null) {
-                    ((ViewGroup) writeReviewLayout.getParent()).removeView(writeReviewLayout);
+                    ((ViewGroup) writingReviewLayout.getParent()).removeView(writingReviewLayout);
                 }
             }
 
@@ -392,7 +421,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                                             }
 
                                             ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
-                                            ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                                            ((RelativeLayout.LayoutParams) writingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
                                             isDeleteMoreReviewLayout = true;
                                         }
 
@@ -425,7 +454,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                                             }
 
                                             ((ViewGroup) moreReviewLayout.getParent()).removeView(moreReviewLayout);
-                                            ((RelativeLayout.LayoutParams) writeReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+                                            ((RelativeLayout.LayoutParams) writingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
                                             isDeleteMoreReviewLayout = true;
                                         }
 
@@ -451,182 +480,17 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         });
 
-        writeReviewLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                final ViewGroup viewGroup = (ViewGroup) writeReviewLayout.getParent();
-
-                openedWritingReviewLayout = (LinearLayout) inflater.inflate(R.layout.write_review, viewGroup, false);
-
-                LinearLayout postWritingReviewLayout = openedWritingReviewLayout.findViewById(R.id.write_review_write_review_layout);
-                final EditText contentInput = openedWritingReviewLayout.findViewById(R.id.write_review_content_input);
-
-                isOpenWritingReviewLayout = true;
-
-                starImage1 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image1);
-                starImage2 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image2);
-                starImage3 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image3);
-                starImage4 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image4);
-                starImage5 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image5);
-
-                viewGroup.removeView(writeReviewLayout);
-                viewGroup.addView(openedWritingReviewLayout);
-
-                if (isDeleteMoreReviewLayout) {
-                    ((RelativeLayout.LayoutParams) openedWritingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
-                } else {
-                    ((RelativeLayout.LayoutParams) openedWritingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_more_review_layout);
+        if (isOpenWritingReviewLayout) {
+            openWritingReviewLayout(false);
+            editReviewScore();
+        } else {
+            writingReviewLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openWritingReviewLayout(true);
                 }
-
-                openedWritingReviewLayout.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_top_for_writing_review));
-
-                recyclerView.bringToFront();
-                moreReviewLayout.bringToFront();
-
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {}
-
-                        scrollView.smoothScrollTo(0, 99999999);
-                    }
-                });
-
-                starImage1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        reviewScore = 1;
-                        editReviewScore();
-                    }
-                });
-
-                starImage2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        reviewScore = 2;
-                        editReviewScore();
-                    }
-                });
-
-                starImage3.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        reviewScore = 3;
-                        editReviewScore();
-                    }
-                });
-
-                starImage4.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        reviewScore = 4;
-                        editReviewScore();
-                    }
-                });
-
-                starImage5.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        reviewScore = 5;
-                        editReviewScore();
-                    }
-                });
-
-                postWritingReviewLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (reviewScore != 0) {
-                            if (!contentInput.getText().toString().equals("")) {
-                                ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), CurrentUserInfo.getInstance().isMan(), reviewScore, contentInput.getText().toString(), CurrentUserInfo.getInstance().getProfileImage());
-                                float sumOfScore;
-                                int reviewCount;
-
-                                reviewDataList.add(0, reviewPost);
-                                reviewPost.postFirebaseDatabase(movieData.getTitle());
-
-                                movieReviewAdapter.notifyDataSetChanged();
-
-                                viewGroup.removeView(openedWritingReviewLayout);
-
-                                reviewCount = Integer.parseInt(reviewNumberText.getText().toString()) + 1;
-                                sumOfScore = (reviewCount - 1) * averageScore + reviewPost.getScore();
-                                reviewNumberText.setText(String.valueOf(reviewCount));
-                                scoreText.setText(String.format("%.1f", sumOfScore / reviewCount));
-
-                                if (reviewPost.getIsMan()) {
-                                    switch (reviewPost.getScore()) {
-                                        case 1:
-                                            numberOfManScore[0]++;
-                                            break;
-
-                                        case 2:
-                                            numberOfManScore[1]++;
-                                            break;
-
-                                        case 3:
-                                            numberOfManScore[2]++;
-                                            break;
-
-                                        case 4:
-                                            numberOfManScore[3]++;
-                                            break;
-
-                                        case 5:
-                                            numberOfManScore[4]++;
-                                            break;
-                                    }
-                                } else {
-                                    switch (reviewPost.getScore()) {
-                                        case 1:
-                                            numberOfWomanScore[0]++;
-                                            break;
-
-                                        case 2:
-                                            numberOfWomanScore[1]++;
-                                            break;
-
-                                        case 3:
-                                            numberOfWomanScore[2]++;
-                                            break;
-
-                                        case 4:
-                                            numberOfWomanScore[3]++;
-                                            break;
-
-                                        case 5:
-                                            numberOfWomanScore[4]++;
-                                            break;
-                                    }
-                                }
-
-                                renewScoreGraph();
-
-                                scrollView.smoothScrollTo(0, reviewTitleLayout.getTop());
-                            } else {
-                                new AlertDialog.Builder(MovieDetailActivity.this)
-                                        .setMessage("리뷰 내용을 작성하세요")
-                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                            }
-                                        }).show();
-                            }
-                        } else {
-                            new AlertDialog.Builder(MovieDetailActivity.this)
-                                    .setMessage("별을 눌러 평점을 매겨주세요")
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    }).show();
-                        }
-                    }
-                });
-            }
-        });
+            });
+        }
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -638,12 +502,200 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable("reviewDataList", (Serializable) reviewDataList);
+        outState.putBoolean("isOpenWritingReviewLayout", isOpenWritingReviewLayout);
+        outState.putInt("reviewScore", reviewScore);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
 
         for (ReviewPost reviewPost : reviewDataList) {
             reviewPost.postFirebaseDatabase(movieData.getTitle());
         }
+    }
+
+    private void openWritingReviewLayout(boolean doRunAnim) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        final ViewGroup viewGroup = (ViewGroup) writingReviewLayout.getParent();
+
+        openedWritingReviewLayout = (LinearLayout) inflater.inflate(R.layout.write_review, viewGroup, false);
+
+        LinearLayout postWritingReviewLayout = openedWritingReviewLayout.findViewById(R.id.write_review_write_review_layout);
+        final EditText contentInput = openedWritingReviewLayout.findViewById(R.id.write_review_content_input);
+
+        isOpenWritingReviewLayout = true;
+
+        starImage1 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image1);
+        starImage2 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image2);
+        starImage3 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image3);
+        starImage4 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image4);
+        starImage5 = openedWritingReviewLayout.findViewById(R.id.write_review_star_image5);
+
+        viewGroup.removeView(writingReviewLayout);
+        viewGroup.addView(openedWritingReviewLayout);
+
+        if (isDeleteMoreReviewLayout) {
+            ((RelativeLayout.LayoutParams) openedWritingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_recycler_view);
+        } else {
+            ((RelativeLayout.LayoutParams) openedWritingReviewLayout.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.movie_detail_more_review_layout);
+        }
+
+        if (doRunAnim) {
+            openedWritingReviewLayout.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_top_for_writing_review));
+        }
+
+        recyclerView.bringToFront();
+        moreReviewLayout.bringToFront();
+
+        if (doRunAnim) {
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                    }
+
+                    scrollView.smoothScrollTo(0, 99999999);
+                }
+            });
+        }
+
+        starImage1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reviewScore = 1;
+                editReviewScore();
+            }
+        });
+
+        starImage2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reviewScore = 2;
+                editReviewScore();
+            }
+        });
+
+        starImage3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reviewScore = 3;
+                editReviewScore();
+            }
+        });
+
+        starImage4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reviewScore = 4;
+                editReviewScore();
+            }
+        });
+
+        starImage5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reviewScore = 5;
+                editReviewScore();
+            }
+        });
+
+        postWritingReviewLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (reviewScore != 0) {
+                    if (!contentInput.getText().toString().equals("")) {
+                        ReviewPost reviewPost = new ReviewPost(CurrentUserInfo.getInstance().getId(), CurrentUserInfo.getInstance().isMan(), reviewScore, contentInput.getText().toString(), CurrentUserInfo.getInstance().getProfileImage());
+                        float sumOfScore;
+                        int reviewCount;
+
+                        reviewDataList.add(0, reviewPost);
+                        reviewPost.postFirebaseDatabase(movieData.getTitle());
+
+                        movieReviewAdapter.notifyDataSetChanged();
+
+                        viewGroup.removeView(openedWritingReviewLayout);
+
+                        reviewCount = Integer.parseInt(reviewNumberText.getText().toString()) + 1;
+                        sumOfScore = (reviewCount - 1) * averageScore + reviewPost.getScore();
+                        reviewNumberText.setText(String.valueOf(reviewCount));
+                        scoreText.setText(String.format("%.1f", sumOfScore / reviewCount));
+
+                        if (reviewPost.getIsMan()) {
+                            switch (reviewPost.getScore()) {
+                                case 1:
+                                    numberOfManScore[0]++;
+                                    break;
+
+                                case 2:
+                                    numberOfManScore[1]++;
+                                    break;
+
+                                case 3:
+                                    numberOfManScore[2]++;
+                                    break;
+
+                                case 4:
+                                    numberOfManScore[3]++;
+                                    break;
+
+                                case 5:
+                                    numberOfManScore[4]++;
+                                    break;
+                            }
+                        } else {
+                            switch (reviewPost.getScore()) {
+                                case 1:
+                                    numberOfWomanScore[0]++;
+                                    break;
+
+                                case 2:
+                                    numberOfWomanScore[1]++;
+                                    break;
+
+                                case 3:
+                                    numberOfWomanScore[2]++;
+                                    break;
+
+                                case 4:
+                                    numberOfWomanScore[3]++;
+                                    break;
+
+                                case 5:
+                                    numberOfWomanScore[4]++;
+                                    break;
+                            }
+                        }
+
+                        renewScoreGraph();
+
+                        scrollView.smoothScrollTo(0, reviewTitleLayout.getTop());
+                    } else {
+                        new AlertDialog.Builder(MovieDetailActivity.this)
+                                .setMessage("리뷰 내용을 작성하세요")
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                }).show();
+                    }
+                } else {
+                    new AlertDialog.Builder(MovieDetailActivity.this)
+                            .setMessage("별을 눌러 평점을 매겨주세요")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            }).show();
+                }
+            }
+        });
     }
 
     private void renewScoreGraph() {
