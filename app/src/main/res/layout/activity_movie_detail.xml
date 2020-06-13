@@ -108,7 +108,9 @@
                                 android:fontFamily="@font/yoongodic320"
                                 android:text="2020"
                                 android:textColor="#888888"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"
+                                android:paddingStart="1dp"/>
+
                         </LinearLayout>
 
                     </LinearLayout>
