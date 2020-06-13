@@ -29,28 +29,38 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="10dp"/>
 
-    <Button
-        android:id="@+id/drawer_no_button"
+    <LinearLayout
+        android:id="@+id/drawer_logout_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="@drawable/drawer_border_button_top"
-        android:text="의미없는 버튼"
-        android:textColor="#FFFFFF"
-        android:fontFamily="@font/yoongodic320"
-        android:textSize="20sp"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="30dp">
 
-    <Button
-        android:id="@+id/drawer_logout_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/drawer_border_button"
-        android:text="로그아웃"
-        android:textColor="#FFFFFF"
-        android:fontFamily="@font/yoongodic320"
-        android:textSize="20sp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:paddingVertical="10dp">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_power"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="로그아웃"
+                android:textColor="#FFFFFF"
+                android:fontFamily="@font/yoongodic320"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp"/>
 
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

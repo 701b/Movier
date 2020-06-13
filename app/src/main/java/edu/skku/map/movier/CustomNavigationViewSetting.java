@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,7 +43,7 @@ public class CustomNavigationViewSetting {
     private void init() {
         NavigationView navigationView = activity.findViewById(R.id.navigation_view);
         View headerView = navigationView.getHeaderView(0);
-        Button drawerLogoutButton = headerView.findViewById(R.id.drawer_logout_button);
+        LinearLayout drawerLogoutLayout = headerView.findViewById(R.id.drawer_logout_layout);
         TextView idText = headerView.findViewById(R.id.drawer_id_text);
         final DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
 
@@ -62,7 +63,7 @@ public class CustomNavigationViewSetting {
             }
         });
 
-        drawerLogoutButton.setOnClickListener(new View.OnClickListener() {
+        drawerLogoutLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
