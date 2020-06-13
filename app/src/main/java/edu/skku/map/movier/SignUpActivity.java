@@ -77,32 +77,35 @@ public class SignUpActivity extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        greetingText.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_from_left));
+        if (savedInstanceState == null) {
+            greetingText.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_from_left));
 
-        introductionText1.setVisibility(View.INVISIBLE);
-        introductionText2.setVisibility(View.INVISIBLE);
-        loginLayout.setVisibility(View.INVISIBLE);
+            introductionText1.setVisibility(View.INVISIBLE);
+            introductionText2.setVisibility(View.INVISIBLE);
+            loginLayout.setVisibility(View.INVISIBLE);
 
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {}
-
-                SignUpActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        introductionText1.setVisibility(View.VISIBLE);
-                        introductionText2.setVisibility(View.VISIBLE);
-                        loginLayout.setVisibility(View.VISIBLE);
-                        introductionText1.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
-                        introductionText2.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
-                        loginLayout.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
                     }
-                });
-            }
-        });
+
+                    SignUpActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            introductionText1.setVisibility(View.VISIBLE);
+                            introductionText2.setVisibility(View.VISIBLE);
+                            loginLayout.setVisibility(View.VISIBLE);
+                            introductionText1.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
+                            introductionText2.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
+                            loginLayout.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_from_left));
+                        }
+                    });
+                }
+            });
+        }
 
         loginLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,9 +288,25 @@ public class SignUpActivity extends AppCompatActivity {
                 goToLoginPage();
             }
         });
+
+        if (savedInstanceState != null) {
+            isMan = savedInstanceState.getBoolean("isMan");
+
+            if (!isMan) {
+                womanButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_red_bordered_background));
+                womanButton.setTextColor(Color.parseColor("#FF0000"));
+                manButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
+                manButton.setTextColor(Color.parseColor("#BBBBBB"));
+            }
+        }
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
 
+        outState.putBoolean("isMan", isMan);
+    }
 
     private void goToLoginPage() {
         Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
