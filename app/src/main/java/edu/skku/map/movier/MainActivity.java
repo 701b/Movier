@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -76,7 +77,11 @@ public class MainActivity extends AppCompatActivity {
                 searchMovie();
             }
         });
+
+        Log.d("TEST", "onCreate");
     }
+
+
 
     private void initRecyclerView() {
         movieDataList = new ArrayList<>();
@@ -225,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 goToSignUpPage();
             }
+        } else {
+            customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
         }
     }
 
