@@ -92,6 +92,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         final ProgressBar mainProgressBar = findViewById(R.id.movie_detail_main_loading_image);
         final LinearLayout contentLayout = findViewById(R.id.movie_detail_content_layout);
         final NestedScrollView scrollView = findViewById(R.id.movie_detail_scroll_view);
+        final LinearLayout reviewTitleLayout = findViewById(R.id.movie_detail_review_title_layout);
 
         ImageButton backButton = findViewById(R.id.movie_detail_back_button);
         ImageButton toggleDrawerButton = findViewById(R.id.movie_detail_toggle_drawer_button);
@@ -529,6 +530,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                                 reviewDataList.add(0, reviewPost);
                                 reviewPost.postFirebaseDatabase(movieData.getTitle());
+                                reviewPost.setProfileImage(CurrentUserInfo.getInstance().getProfileImage());
 
                                 movieReviewAdapter.notifyDataSetChanged();
 
@@ -586,6 +588,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 }
 
                                 renewScoreGraph();
+
+                                scrollView.smoothScrollTo(0, reviewTitleLayout.getTop());
                             } else {
                                 new AlertDialog.Builder(MovieDetailActivity.this)
                                         .setMessage("리뷰 내용을 작성하세요")
