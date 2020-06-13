@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +34,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
+    private ScrollView scrollView;
     private EditText idInput;
     private EditText passwordInput;
     private Button manButton;
@@ -54,6 +56,7 @@ public class SignUpActivity extends AppCompatActivity {
         ImageButton cancleButton = findViewById(R.id.signup_cancle_button);
         TextView greetingText = findViewById(R.id.signup_greeting_text);
 
+        scrollView = findViewById(R.id.signup_scroll_view);
         idInput = findViewById(R.id.signup_id_input);
         passwordInput = findViewById(R.id.signup_password_input);
         manButton = findViewById(R.id.signup_man_button);
@@ -100,6 +103,20 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 goToLoginPage();
+            }
+        });
+
+        idInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.smoothScrollTo(0, idInput.getTop());
+            }
+        });
+
+        passwordInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.smoothScrollTo(0, passwordInput.getTop());
             }
         });
 

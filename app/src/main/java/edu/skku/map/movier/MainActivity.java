@@ -81,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        movieItemAdapter.notifyDataSetChanged();
+    }
+
     private void initRecyclerView() {
         movieDataList = new ArrayList<>();
         movieItemAdapter = new MovieItemAdapter(MainActivity.this, movieDataList, new OnItemClickMovieItemListener() {

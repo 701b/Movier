@@ -34,6 +34,7 @@
         android:layout_marginStart="20dp"/>
 
     <ScrollView
+        android:id="@+id/signup_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
@@ -145,7 +146,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="80dp"
                 android:fontFamily="@font/yoongodic320"
                 android:text="비밀번호를 입력해주세요"
                 android:textColor="#222222"
@@ -177,7 +178,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="80dp"
                 android:fontFamily="@font/yoongodic320"
                 android:text="성별을 선택해주세요"
                 android:textColor="#222222"
@@ -214,7 +215,7 @@
                 android:id="@+id/signup_signup_button"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="70dp"
                 android:background="@drawable/white_rounded_grey_bordered_background"
                 android:text="가입"
                 android:textColor="#BBBBBB"
