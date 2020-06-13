@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -33,6 +34,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private CustomNavigationViewSetting customNavigationViewSetting;
 
-    private boolean isSearchFinished;
+    private boolean isSearchFinished = false;
 
 
     @Override
@@ -71,6 +73,27 @@ public class MainActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(MainActivity.this);
 
+        if (savedInstanceState != null) {
+            movieDataList = (List<MovieData>) savedInstanceState.getSerializable("movieDataList");
+            isSearchFinished = savedInstanceState.getBoolean("isSearchFinished");
+
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                if (movieDataList.size() % 3 == 2) {
+                    movieDataList.remove(movieDataList.size() - 1);
+                }
+
+                if (movieDataList.size() % 3 == 1) {
+                    movieDataList.remove(movieDataList.size() - 1);
+                    isSearchFinished = false;
+                }
+            } else {
+                if (movieDataList.size() % 2 == 1) {
+                    movieDataList.remove(movieDataList.size() - 1);
+                    isSearchFinished = false;
+                }
+            }
+        }
+
         autoLogin();
         initRecyclerView();
 
@@ -83,6 +106,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable("movieDataList", (Serializable) movieDataList);
+        outState.putBoolean("isSearchFinished", isSearchFinished);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -90,7 +121,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        movieDataList = new ArrayList<>();
+        if (movieDataList == null) {
+            movieDataList = new ArrayList<>();
+        }
+
         movieItemAdapter = new MovieItemAdapter(MainActivity.this, movieDataList, new OnItemClickMovieItemListener() {
             @Override
             public void onItemClickMovieItem(MovieData movieData) {
@@ -102,7 +136,12 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_from_bottom, R.anim.do_nothing);
             }
         });
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        }
         recyclerView.setAdapter(movieItemAdapter);
 
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -112,36 +151,67 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!isSearchFinished) {
                     if (!recyclerView.canScrollVertically(1)) {
-                        new NaverMovieSearch(movieTitleInput.getText().toString(), movieDataList.size() + 1, new OnReceiveMovieDataListener() {
-                            @Override
-                            public void onReceiveMovieData(List<MovieData> movieDataList) {
+                        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            new NaverMovieSearch(movieTitleInput.getText().toString(), movieDataList.size() + 1, 12, new OnReceiveMovieDataListener() {
+                                @Override
+                                public void onReceiveMovieData(List<MovieData> movieDataList) {
+                                    if (movieDataList.size() < 12) {
+                                        isSearchFinished = true;
+                                    } else {
+                                        isSearchFinished = false;
+                                    }
 
-                                if (movieDataList.size() < 10) {
-                                    isSearchFinished = true;
-                                } else {
-                                    isSearchFinished = false;
-                                }
-
-                                for (MovieData data1 : MainActivity.this.movieDataList) {
-                                    for (MovieData data2 : movieDataList) {
-                                        if (data1 != data2) {
-                                            if (data1.getTitle().equals(data2.getTitle()) && data1.getPubDate().equals(data2.getPubDate())) {
-                                                movieDataList.remove(data2);
-                                                break;
+                                    for (MovieData data1 : MainActivity.this.movieDataList) {
+                                        for (MovieData data2 : movieDataList) {
+                                            if (data1 != data2) {
+                                                if (data1.getTitle().equals(data2.getTitle()) && data1.getPubDate().equals(data2.getPubDate())) {
+                                                    movieDataList.remove(data2);
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
-                                }
 
-                                MainActivity.this.movieDataList.addAll(movieDataList);
-                                MainActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        movieItemAdapter.notifyDataSetChanged();
+                                    MainActivity.this.movieDataList.addAll(movieDataList);
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            movieItemAdapter.notifyDataSetChanged();
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            new NaverMovieSearch(movieTitleInput.getText().toString(), movieDataList.size() + 1, 10, new OnReceiveMovieDataListener() {
+                                @Override
+                                public void onReceiveMovieData(List<MovieData> movieDataList) {
+                                    if (movieDataList.size() < 10) {
+                                        isSearchFinished = true;
+                                    } else {
+                                        isSearchFinished = false;
                                     }
-                                });
-                            }
-                        });
+
+                                    for (MovieData data1 : MainActivity.this.movieDataList) {
+                                        for (MovieData data2 : movieDataList) {
+                                            if (data1 != data2) {
+                                                if (data1.getTitle().equals(data2.getTitle()) && data1.getPubDate().equals(data2.getPubDate())) {
+                                                    movieDataList.remove(data2);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    MainActivity.this.movieDataList.addAll(movieDataList);
+                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            movieItemAdapter.notifyDataSetChanged();
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -167,25 +237,47 @@ public class MainActivity extends AppCompatActivity {
         movieDataList.clear();
         movieItemAdapter.getPosterImageMap().clear();
 
-        new NaverMovieSearch(movieTitleInput.getText().toString(), 1, new OnReceiveMovieDataListener() {
-            @Override
-            public void onReceiveMovieData(List<MovieData> movieDataList) {
-                if (movieDataList.size() < 10) {
-                    isSearchFinished = true;
-                } else {
-                    isSearchFinished = false;
-                }
-
-                MainActivity.this.movieDataList.clear();
-                MainActivity.this.movieDataList.addAll(movieDataList);
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        movieItemAdapter.notifyDataSetChanged();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            new NaverMovieSearch(movieTitleInput.getText().toString(), 1, 12, new OnReceiveMovieDataListener() {
+                @Override
+                public void onReceiveMovieData(List<MovieData> movieDataList) {
+                    if (movieDataList.size() < 12) {
+                        isSearchFinished = true;
+                    } else {
+                        isSearchFinished = false;
                     }
-                });
-            }
-        });
+
+                    MainActivity.this.movieDataList.clear();
+                    MainActivity.this.movieDataList.addAll(movieDataList);
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            movieItemAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            });
+        } else {
+            new NaverMovieSearch(movieTitleInput.getText().toString(), 1, 10, new OnReceiveMovieDataListener() {
+                @Override
+                public void onReceiveMovieData(List<MovieData> movieDataList) {
+                    if (movieDataList.size() < 10) {
+                        isSearchFinished = true;
+                    } else {
+                        isSearchFinished = false;
+                    }
+
+                    MainActivity.this.movieDataList.clear();
+                    MainActivity.this.movieDataList.addAll(movieDataList);
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            movieItemAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private void autoLogin() {

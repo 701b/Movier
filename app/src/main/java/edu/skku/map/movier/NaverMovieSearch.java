@@ -33,12 +33,14 @@ public class NaverMovieSearch {
     private String searchKeyword;
     private OnReceiveMovieDataListener onReceiveMovieDataListener;
     private int startPosition;
+    private int numberToSearch;
 
 
-    public NaverMovieSearch(String searchKeyword, int startPosition, OnReceiveMovieDataListener onReceiveMovieDataListener) {
+    public NaverMovieSearch(String searchKeyword, int startPosition, int numberToSearch, OnReceiveMovieDataListener onReceiveMovieDataListener) {
         this.searchKeyword = searchKeyword;
         this.startPosition = startPosition;
         this.onReceiveMovieDataListener = onReceiveMovieDataListener;
+        this.numberToSearch = numberToSearch;
 
         sendRequest();
     }
@@ -58,6 +60,7 @@ public class NaverMovieSearch {
 
         urlBuilder.addQueryParameter("query", searchKeyword);
         urlBuilder.addQueryParameter("start", String.valueOf(startPosition));
+        urlBuilder.addQueryParameter("display", String.valueOf(numberToSearch));
         reqUrl = urlBuilder.build().toString();
         headerBuild = Headers.of(requestHeaders);
         request = new Request.Builder().url(reqUrl).headers(headerBuild).build();
