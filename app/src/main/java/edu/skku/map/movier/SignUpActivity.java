@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -107,41 +109,47 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(final CharSequence s, int start, int before, int count) {
+                idAlertText.setText("");
+
                 if (!s.toString().equals("")) {
-                    databaseReference.child(UserAccountPost.ACCOUNT_TABLE_NAME).child(idInput.getText().toString())
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    UserAccountPost post = dataSnapshot.getValue(UserAccountPost.class);
+                    if (!s.toString().contains(".") && !s.toString().contains(" ") && !s.toString().contains("$") && !s.toString().contains("#") && !s.toString().contains("[") && !s.toString().contains("]")) {
+                        databaseReference.child(UserAccountPost.ACCOUNT_TABLE_NAME).child(idInput.getText().toString())
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        UserAccountPost post = dataSnapshot.getValue(UserAccountPost.class);
 
-                                    if (post != null) {
-                                        // 데이터베이스에 같은 id가 존재할 때
-                                        if (!post.getId().equals(s.toString())) {
-                                            // 빠른 입력으로 어긋나는 현상 방지
-                                            return;
-                                        }
+                                        if (post != null) {
+                                            // 데이터베이스에 같은 id가 존재할 때
+                                            if (!post.getId().equals(s.toString())) {
+                                                // 빠른 입력으로 어긋나는 현상 방지
+                                                return;
+                                            }
 
-                                        idAlertText.setText("다른 아이디를 사용해주세요");
-                                        signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
-                                        signUpButton.setTextColor(Color.parseColor("#BBBBBB"));
-                                    } else {
-                                        if (!idInput.getText().toString().equals("") && !passwordInput.getText().toString().equals("")) {
-                                            signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_red_bordered_background));
-                                            signUpButton.setTextColor(Color.parseColor("#FF0000"));
-                                        } else {
+                                            idAlertText.setText("다른 아이디를 사용해주세요");
                                             signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
                                             signUpButton.setTextColor(Color.parseColor("#BBBBBB"));
+                                        } else {
+                                            if (!idInput.getText().toString().equals("") && !passwordInput.getText().toString().equals("")) {
+                                                signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_red_bordered_background));
+                                                signUpButton.setTextColor(Color.parseColor("#FF0000"));
+                                            } else {
+                                                signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
+                                                signUpButton.setTextColor(Color.parseColor("#BBBBBB"));
+                                            }
                                         }
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                }
-                            });
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
+                                });
+                    } else {
+                        idAlertText.setText("'.', '#', '$', '[', ']'과 공백은 사용할 수 없습니다");
+                        signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
+                        signUpButton.setTextColor(Color.parseColor("#BBBBBB"));
+                    }
                 }
-
-                idAlertText.setText("");
             }
 
             @Override
