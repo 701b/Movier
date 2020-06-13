@@ -186,17 +186,6 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 mainLoadingImage.clearAnimation();
                                 contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
                                 mainLoadingImage.setVisibility(View.INVISIBLE);
-
-                                AsyncTask.execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            Thread.sleep(1);
-                                        } catch (InterruptedException e) {}
-
-                                        //scrollView.scrollTo(0, 0);
-                                    }
-                                });
                             }
                         }
                     }, new OnFailToDownloadProfileImageListener() {
@@ -218,17 +207,6 @@ public class MovieDetailActivity extends AppCompatActivity {
                                 mainLoadingImage.clearAnimation();
                                 contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
                                 mainLoadingImage.setVisibility(View.INVISIBLE);
-
-                                AsyncTask.execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            Thread.sleep(50);
-                                        } catch (InterruptedException e) {}
-
-                                        scrollView.scrollTo(0, 0);
-                                    }
-                                });
                             }
                         }
                     });
@@ -236,6 +214,15 @@ public class MovieDetailActivity extends AppCompatActivity {
                     if (reviewDataList.size() == INITIAL_NUMBER_OF_REVIEW_POST_SHOWN) {
                         break;
                     }
+                }
+
+                if (reviewList.size() == 0) {
+                    // 검색된 리뷰가 없을 때
+                    contentLayout.setVisibility(View.VISIBLE);
+                    movieReviewAdapter.notifyDataSetChanged();
+                    mainLoadingImage.clearAnimation();
+                    contentLayout.startAnimation(AnimationUtils.loadAnimation(MovieDetailActivity.this, android.R.anim.fade_in));
+                    mainLoadingImage.setVisibility(View.INVISIBLE);
                 }
 
                 reviewNumberText.setText(String.valueOf(dataSnapshot.getChildrenCount()));

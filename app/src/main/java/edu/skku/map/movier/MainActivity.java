@@ -77,11 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 searchMovie();
             }
         });
-
-        Log.d("TEST", "onCreate");
     }
-
-
 
     private void initRecyclerView() {
         movieDataList = new ArrayList<>();
