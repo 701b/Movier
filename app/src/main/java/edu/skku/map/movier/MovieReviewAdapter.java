@@ -12,9 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.ViewHolder> {
 
@@ -85,6 +83,9 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
         if (reviewPost.getIsPressThumb(currentUserInfo.getId())) {
             holder.thumbImage.setImageDrawable(context.getDrawable(R.drawable.ic_thumb_up_red));
             holder.numberOfThumbText.setTextColor(Color.RED);
+        } else {
+            holder.thumbImage.setImageDrawable(context.getDrawable(R.drawable.ic_thumb_up));
+            holder.numberOfThumbText.setTextColor(Color.parseColor("#444444"));
         }
 
         holder.thumbImage.setOnClickListener(new View.OnClickListener() {
