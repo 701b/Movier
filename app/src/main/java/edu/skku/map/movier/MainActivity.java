@@ -216,7 +216,8 @@ public class MainActivity extends AppCompatActivity {
                                         }, new OnFailToDownloadProfileImageListener() {
                                             @Override
                                             public void onFailToDownloadProfileImage(Exception e) {
-
+                                                customNavigationViewSetting = new CustomNavigationViewSetting(MainActivity.this, toggleDrawerButton);
+                                                progressDialog.dismiss();
                                             }
                                         });
 
