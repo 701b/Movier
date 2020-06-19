@@ -151,7 +151,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         if (post != null) {
                                             // 데이터베이스에 같은 id가 존재할 때
                                             if (!post.getId().equals(s.toString())) {
-                                                // 빠른 입력으로 어긋나는 현상 방지
+                                                // 데이터베이스 통신 지연과 빠른 입력으로 싱크가 맞지 않는 현상 방지
                                                 return;
                                             }
 
@@ -178,6 +178,9 @@ public class SignUpActivity extends AppCompatActivity {
                         signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
                         signUpButton.setTextColor(Color.parseColor("#BBBBBB"));
                     }
+                } else {
+                    signUpButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_rounded_grey_bordered_background));
+                    signUpButton.setTextColor(Color.parseColor("#BBBBBB"));
                 }
             }
 
