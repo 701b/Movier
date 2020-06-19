@@ -30,11 +30,11 @@ Movier은 앱 사용자 간에 영화에 대한 평가를 공유할 수 있는 �
 ![](.README_images/main_page_no_search.png)
 
 '영화 검색'이라고 쓰여진 부분에 영화 제목을 작성하여 검색할 수 있습니다.  
-이 외에 오른쪽 상단의 사람 모양 아이콘을 누르면 Navigation View를 통해 사용자 계정에 대해 확인할 수 있습니다.
+이 외에 오른쪽 상단의 사람 모양 아이콘을 누르면 NavigationView를 통해 사용자 계정에 대해 확인할 수 있습니다.
 
 ![](.README_images/navigation_view.png)
 
-사람 모양 아이콘을 터치하면 이렇게 오른쪽에서 navigationView가 나옵니다.
+사람 모양 아이콘을 터치하면 오른쪽에서 navigationView가 나옵니다.
 
 ![](.README_images/main_page_search.png)
 
@@ -183,7 +183,8 @@ back-end 서버로는 Firebase를 사용했습니다.
 ##### (2) 저장소
 >
 >저장소는 오직 사용자들의 프로필 사진을 저장하기 위해서만 사용합니다.  
->저장한 프로필 사진은 로그인 시 불러오며, Navigation view에서 보여주거나, 리뷰에 띄워줍니다.
+>저장한 프로필 사진은 로그인 시 불러와 navigationView에서 확인할 수 있고,  
+>영화 리뷰를 작성한 사람들의 프로필 사진도 영화 검색 Activity에서 영화를 클릭해서 로딩할 때 가져옵니다.
 
 ### 4. 사용한 API
 API는 NAVER의 검색 API를 사용했습니다. 검색 API를 통해 영화의 상세한 정보와 포스터를 가져오도록 했습니다.
