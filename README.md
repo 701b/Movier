@@ -1,3 +1,7 @@
+<!--
+마크다운으로 작성된 파일입니다. 
+정확한 외관은 https://github.com/701b/Movier에서 확인할 수 있습니다.
+-->
 Movier
 ======
 
@@ -30,7 +34,7 @@ Movier은 앱 사용자 간에 영화에 대한 평가를 공유할 수 있는 �
 
 ![](.README_images/navigation_view.png)
 
-사람 모양 아이콘을 터치하면 이렇게 오른쪽에서 navigation view가 나옵니다.
+사람 모양 아이콘을 터치하면 이렇게 오른쪽에서 navigationView가 나옵니다.
 
 ![](.README_images/main_page_search.png)
 
@@ -54,6 +58,7 @@ navigation view를 닫고, 영화 제목을 쓰고 검색 버튼을 터치하면
 앱 특징으로는 다음과 같이 있습니다.
 1. Landscape 지원
 2. 사용자와의 상호작용
+3. 자동 로그인
 
 #### (1) Landscape 지원
 >
@@ -89,20 +94,67 @@ navigation view를 닫고, 영화 제목을 쓰고 검색 버튼을 터치하면
 >![](.README_images/signup_page_redundant_id.png)
 >
 >이 피드백을 보고 사용자는 아이디가 중복되어서 다른 아이디를 사용해야 한다는 것을 바로 알 수 있습니다.  
->아이디를 입력하고 나서 비밀번호 입력칸이 선택되면 비밀번호 입력칸의 위치에 맞게 자동으로 스크롤됩니다.
+>아이디를 입력하고 나서 비밀번호 입력칸이 선택되면 비밀번호 입력칸의 위치에 맞게 자동으로 스크롤됩니다.  
+> 
+>![](.README_images/signup_page_auto_scroll.gif)
+>
+>비밀번호 입력칸이 선택되니 입력하기 편하도록 스크롤되는 것을 확인할 수 있습니다.  
 >
 >![](.README_images/signup_page_red_button.png)
 >
->아이디와 비밀번호를 조건에 맞게 입력하고 나면 가입 버튼이 빨갛게 변한 것을 확인할 수 있습니다.
+>아이디와 비밀번호를 조건에 맞게 입력하고 나면 가입 버튼이 빨갛게 변한 것을 확인할 수 있습니다.  
 >이제 버튼을 터치하면 가입이 완료됩니다.
 >
->![](.README_images/signup_page_auto_scroll.gif)
+>![](.README_images/signup_page_loading.gif)
 >
+>가입 버튼을 누르니 progressDialog가 띄워지는 것을 볼 수 있습니다.  
+>만약 데이터베이스와 통신하면서 지연되는 시간에 아무 표시도 하지 않는다면  
+>사용자는 버튼을 터치하지 않았다고 생각하거나 앱이 렉먹었다고 생각할 것입니다.  
+>하지만 progressDialog를 띄움으로써 앱이 통신 중임을 알려줄 수 있습니다.
 >
+>![](.README_images/login_page_no_password.png)
+>![](.README_images/login_page_wrong_id.png)
+>
+>로그인 페이지에서도 아이디나 비밀번호를 작성하지 않았거나,  
+>아이디나 비밀번호가 틀리면 즉각적으로 피드백해줍니다.
+>  
+>이제 영화 검색 페이지로 가보겠습니다.
+>
+>![](.README_images/main_keyboard_hide.gif)
+>
+>영화 검색 입력칸에 영화 제목을 쓰고 검색 버튼을 터치하면 검색된 영화들을 가리지 않도록  
+>키보드가 자동으로 내려갑니다.
+>
+>![](.README_images/movie_detail_loading.gif)
+>
+>이제 영화를 터치하면 데이터베이스에서 영화 리뷰들을 가져옵니다.  
+>마찬가지로 데이터베이스와 통신하고 있음을 progressBar을 통해 사용자에게 알려줍니다.  
+>
+>![](.README_images/movie_detail_review_loading.gif)
+>
+>리뷰가 있는 곳에서 더보기 버튼을 누르면 이 때도 데이터베이스와 통신을 하게 됩니다.  
+>마찬가지로 사용자에게 통신 중임을 알려주고, 통신 후에는 리뷰들을 보여주면서  
+>자동으로 화면이 스크롤됩니다.
+>
+>![](.README_images/movie_detail_review_scroll_up.gif)
+>
+>리뷰를 작성한 후에는 본인이 작성한 리뷰가 있는 곳으로 자동 스크롤됩니다.  
+>또한 본인이 쓴 리뷰는 항상 옅은 빨강 배경으로 강조됩니다.  
+>  
+>이처럼 여러 곳에서 사용자기 앱과 상호작용하기 쉽도록 기능을 제공하고 있습니다.
 
+#### (3) 자동 로그인
+>
+>Movier 앱은 자동 로그인 기능을 지원합니다. 로그인을 한 후에는 해당 로그인 정보를  
+>sharedPreference를 통해 로컬에 저장하고 로그아웃을 하지 않는다면 이 정보는 삭제되지 않습니다.  
+>이후 앱을 실행할 때 저장된 정보로 데이터베이스와 통신하여 자동으로 로그인합니다.
+>
+>![](.README_images/auto_login.gif)
+>
+>데이터베이스와 통신하는 동안 progressDialog를 띄웁니다.  
+>이후 navigationView를 통해 로그인이 되어 있는 것을 확인할 수 있습니다.
 
 ### 3. back-end 서버와의 통신
->
 
 back-end 서버로는 Firebase를 사용했습니다.  
 그 중에서 실시간 데이터베이스와 저장소 기능을 사용했습니다.
